@@ -359,7 +359,7 @@ namespace SalasZoomNotificationFormadores
 
             MailMessage mm = new MailMessage();
             mm.From = new MailAddress("Instituto CRIAP <" + Properties.Settings.Default.emailenvio + "> ");
-            mm.To.Add("geral@isoft.pt");
+            // -mm.To.Add("geral@isoft.pt");
             mm.To.Add("ritagoncalves@criap.com");
             mm.To.Add("geral@criap.com");
             mm.To.Add("luisgraca@criap.com");
@@ -462,11 +462,12 @@ namespace SalasZoomNotificationFormadores
 
                         string telefone = (from d in Formadores where d.formadorID == hora.FormadorID select d.Telefone).Distinct().First().ToString();
 
-                        string emailtxtcoordenador = "geral@criap.com";
-                        if (codcoordenador != "")
+                        string emailtxtcoordenador = "";
+                        if (codcoordenador != "" && codcoordenador!="hst" && codcoordenador!="fm")
                         {
                             emailtxtcoordenador = (from a in db.listaColaboradores where (a.codigo_Colaborador == codcoordenador) select a.email).First();
                         }
+                        emailtxtcoordenador = "geral@criap.com";
 
                         if (email1 != "")
                         {
@@ -476,7 +477,7 @@ namespace SalasZoomNotificationFormadores
                                 mm.From = new MailAddress("Instituto CRIAP <" + Properties.Settings.Default.emailenvio + "> ");
 
                                 mm.To.Add(email1.Trim());
-                                //mm.To.Add("joaoferreira@criap.com");
+                                //mm.To.Add("sandraaguilar@criap.com");
                                 mm.Subject = hora.RefAccao + " || " + editcurso + " // aula: " + hora.HoraInicio.ToShortDateString();
                                 mm.IsBodyHtml = true;
                                 mm.BodyEncoding = UTF8Encoding.UTF8;
