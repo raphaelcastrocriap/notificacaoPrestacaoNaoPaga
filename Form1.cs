@@ -364,7 +364,7 @@ namespace SalasZoomNotificationFormadores
             mm.To.Add("geral@criap.com");
             mm.To.Add("luisgraca@criap.com");
             mm.To.Add("informatica@criap.com");
-
+            //mm.To.Add("sandraaguilar@criap.com");
             mm.Subject = assunto + " // " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToShortTimeString();
             mm.IsBodyHtml = false;
             mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -462,12 +462,26 @@ namespace SalasZoomNotificationFormadores
 
                         string telefone = (from d in Formadores where d.formadorID == hora.FormadorID select d.Telefone).Distinct().First().ToString();
 
-                        string emailtxtcoordenador = "";
-                        if (codcoordenador != "" && codcoordenador!="hst" && codcoordenador!="fm")
+                        string emailtxtcoordenador = "geral@criap.com";
+                        if (codcoordenador != "")
                         {
-                            emailtxtcoordenador = (from a in db.listaColaboradores where (a.codigo_Colaborador == codcoordenador) select a.email).First();
+                            if (codcoordenador == "hst")
+                                emailtxtcoordenador = "hst@criap.com";
+                            else if (codcoordenador == "fm")
+                                emailtxtcoordenador = "pedagogicofm@criap.com";
+                            else
+                            {
+                                try
+                                {
+                                    emailtxtcoordenador = (from a in db.listaColaboradores where (a.codigo_Colaborador == codcoordenador) select a.email).First();
+                                }
+                                catch
+                                {
+                                    emailtxtcoordenador = "geral@criap.com";
+                                }
+                            }
                         }
-                        emailtxtcoordenador = "geral@criap.com";
+                        
 
                         if (email1 != "")
                         {
@@ -509,6 +523,7 @@ namespace SalasZoomNotificationFormadores
                                     if (telefone != null)
                                     {
                                         numValidate = ValidarNum(telefone);
+                                        
                                         if (numValidate != null)
                                         {
                                             newSms.msisdn = numValidate;
@@ -538,7 +553,7 @@ namespace SalasZoomNotificationFormadores
                                             envio.text = logsSenders[0].Mensagem;
                                             envio.recipientsWithName = logsSenders[0].smsSenders.ToArray();
                                             smsS.Add(envio);
-                                            smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString();
+                                            smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString(); //principal
 
                                             richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + hora.Formador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + hora.RefAccao + " | " + horamodulo + Environment.NewLine;
                                         }
@@ -603,7 +618,21 @@ namespace SalasZoomNotificationFormadores
                         string emailtxtcoordenador = "geral@criap.com";
                         if (codcoordenador != "")
                         {
-                            emailtxtcoordenador = (from a in db.listaColaboradores where (a.codigo_Colaborador == codcoordenador) select a.email).First();
+                            if (codcoordenador == "hst")
+                                emailtxtcoordenador = "hst@criap.com";
+                            else if (codcoordenador == "fm")
+                                emailtxtcoordenador = "pedagogicofm@criap.com";
+                            else
+                            {
+                                try
+                                {
+                                    emailtxtcoordenador = (from a in db.listaColaboradores where (a.codigo_Colaborador == codcoordenador) select a.email).First();
+                                }
+                                catch
+                                {
+                                    emailtxtcoordenador = "geral@criap.com";
+                                }
+                            }
                         }
 
                         if (email1 != "")
@@ -647,6 +676,7 @@ namespace SalasZoomNotificationFormadores
                                     if (telefone != null)
                                     {
                                         numValidate = ValidarNum(telefone);
+                                        
                                         if (numValidate != null)
                                         {
                                             newSms.msisdn = numValidate;
@@ -769,7 +799,21 @@ namespace SalasZoomNotificationFormadores
                     string emailtxtcoordenador = "geral@criap.com";
                     if (codcoordenador != "")
                     {
-                        emailtxtcoordenador = (from a in db.listaColaboradores where (a.codigo_Colaborador == codcoordenador) select a.email).First();
+                        if (codcoordenador == "hst")
+                            emailtxtcoordenador = "hst@criap.com";
+                        else if (codcoordenador == "fm")
+                            emailtxtcoordenador = "pedagogicofm@criap.com";
+                        else
+                        {
+                            try
+                            {
+                                emailtxtcoordenador = (from a in db.listaColaboradores where (a.codigo_Colaborador == codcoordenador) select a.email).First();
+                            }
+                            catch
+                            {
+                                emailtxtcoordenador = "geral@criap.com";
+                            }
+                        }
                     }
 
                     if (email1 != "" && hora.CodSala > 0)
@@ -913,7 +957,21 @@ namespace SalasZoomNotificationFormadores
                     string emailtxtcoordenador = "geral@criap.com";
                     if (codcoordenador != "")
                     {
-                        emailtxtcoordenador = (from a in db.listaColaboradores where (a.codigo_Colaborador == codcoordenador) select a.email).First();
+                        if (codcoordenador == "hst")
+                            emailtxtcoordenador = "hst@criap.com";
+                        else if (codcoordenador == "fm")
+                            emailtxtcoordenador = "pedagogicofm@criap.com";
+                        else
+                        {
+                            try
+                            {
+                                emailtxtcoordenador = (from a in db.listaColaboradores where (a.codigo_Colaborador == codcoordenador) select a.email).First();
+                            }
+                            catch
+                            {
+                                emailtxtcoordenador = "geral@criap.com";
+                            }
+                        }
                     }
 
                     if (email1 != "" && hora.CodSala > 0)
@@ -1034,8 +1092,8 @@ namespace SalasZoomNotificationFormadores
 class Result
 {
     public DateTime HoraInicio, HoraFim;
-    public string RefAccao, Formador, CodFormador2, Modulo, Link, Formando, FormadorID;
-    public int Rowid_Accao, CodSala;
+    public string RefAccao, Formador, CodFormador2, Modulo, FormadorID;
+    public int CodSala;
 }
 class Obj_logSend
 {
