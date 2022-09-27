@@ -134,7 +134,7 @@
     </Compile>
     <Compile Include="libray\criapQuerys.cs" />
     <Compile Include="objects\objAlojamentos.cs" />
-    <Compile Include="objects\objCursos.cs" />
+    <Compile Include="objects\objSessao.cs" />
     <Compile Include="objects\objFormacaoExterna.cs" />
     <Compile Include="objects\objMoodleContratos.cs" />
     <Compile Include="objects\objSalas.cs" />
