@@ -152,7 +152,7 @@ namespace SalasZoomNotificationFormadores
                     {
                         tecnicosalavirtual = db.listaColaboradores.Find(x => x.codigo_Colaborador == CODCOLABORADOR).sigla;
                     }
-                    var obj = new objCursos()
+                    var obj = new objSessao()
                     {
                         Codigo_Projeto = dataList[i][0].ToString(),
                         Codigo_Curso = dataList[i][1].ToString(),
@@ -247,7 +247,7 @@ namespace SalasZoomNotificationFormadores
             {
                 for (int i = 0; i < dataList.Count; i++)
                 {
-                    var obj = new objCursos
+                    var obj = new objSessao
                     {
                         FormacaoExternaID = int.Parse(dataList[i][0].ToString()),
                         Modulo = dataList[i][1].ToString(),
@@ -831,7 +831,7 @@ namespace SalasZoomNotificationFormadores
 
                             string horamodulo = "";
                             //VERIFICA QUANTAS SESSÕES TEM
-                            List<objCursos> formadoreslista = (from a in db.htCursos select a).Where(X => X.CodFormador == hora.FormadorID && X.cod_Sala == hora.CodSala && X.Ref_Accao == hora.RefAccao).ToList();
+                            List<objSessao> formadoreslista = (from a in db.htCursos select a).Where(X => X.CodFormador == hora.FormadorID && X.cod_Sala == hora.CodSala && X.Ref_Accao == hora.RefAccao).ToList();
                             foreach (var FORMADOR1 in formadoreslista.ToList())
                             {
                                 if (horamodulo != "")

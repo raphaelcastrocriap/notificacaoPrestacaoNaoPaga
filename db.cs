@@ -11,12 +11,12 @@ namespace SalasZoomNotificationFormadores
 {
     class db
     {
-        public static List<objCursos> htCursos = new List<objCursos>();
+        public static List<objSessao> htCursos = new List<objSessao>();
         public static List<objSalas> Salas = new List<objSalas>();
         public static List<objAlojamentos> Alojamentos = new List<objAlojamentos>();
         public static List<objColaboradores> listaColaboradores = new List<objColaboradores>();
 
-        public static List<objCursos> htCursosselected = new List<objCursos>();
+        public static List<objSessao> htCursosselected = new List<objSessao>();
 
         public static List<objMoodleContratos> moodleContontratos = new List<objMoodleContratos>();
 
