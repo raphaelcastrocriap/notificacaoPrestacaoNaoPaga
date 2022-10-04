@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SalasZoomNotificationFormadores.objects
 {
-    class objAlojamentos
+    class objAlojamento
     {
         public string id { get; set; }
         public string descricao { get; set; }

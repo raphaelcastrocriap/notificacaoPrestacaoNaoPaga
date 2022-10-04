@@ -24,7 +24,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>1.0.6.%2a</ApplicationVersion>
+    <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -133,15 +133,16 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="libray\criapQuerys.cs" />
-    <Compile Include="objects\objAlojamentos.cs" />
+    <Compile Include="objects\objAlojamento.cs" />
     <Compile Include="objects\objSessao.cs" />
     <Compile Include="objects\objFormacaoExterna.cs" />
-    <Compile Include="objects\objMoodleContratos.cs" />
-    <Compile Include="objects\objSalas.cs" />
+    <Compile Include="objects\objMoodleContrato.cs" />
+    <Compile Include="objects\objSala.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

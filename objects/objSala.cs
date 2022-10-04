@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace SalasZoomNotificationFormadores.objects
 {
-    class objSalas
+    class objSala
     {
-        public string id { get; set; }
+        public int id { get; set; }
         public string descricao { get; set; }
         public string nome { get; set; }
         public string local { get; set; }
@@ -17,5 +17,9 @@ namespace SalasZoomNotificationFormadores.objects
         public int capacidadeEscola { get; set; }
         public int capacidadeAuditorio { get; set; }
         public string link { get; set; }
+        public bool zoom { get; set; }
+        public string loginAdmin { get; set; }
+        public string zoomFirstName { get; set; }
+        public string zoomLastName { get; set; }
     }
 }

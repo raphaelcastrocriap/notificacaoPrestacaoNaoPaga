@@ -11,18 +11,18 @@ namespace SalasZoomNotificationFormadores
 {
     class db
     {
-        public static List<objSessao> htCursos = new List<objSessao>();
-        public static List<objSalas> Salas = new List<objSalas>();
-        public static List<objAlojamentos> Alojamentos = new List<objAlojamentos>();
-        public static List<objColaboradores> listaColaboradores = new List<objColaboradores>();
+        public static List<objSessao> htSessoes = new List<objSessao>();
+        public static List<objSala> Salas = new List<objSala>();
+        public static List<objAlojamento> Alojamentos = new List<objAlojamento>();
+        public static List<objColaborador> listaColaboradores = new List<objColaborador>();
 
-        public static List<objSessao> htCursosselected = new List<objSessao>();
+        public static List<objSessao> htSessoesSelected = new List<objSessao>();
 
-        public static List<objMoodleContratos> moodleContontratos = new List<objMoodleContratos>();
+        public static List<objMoodleContrato> moodleContontratos = new List<objMoodleContrato>();
 
-        public static List<objMoodleUser> moodleUser = new List<objMoodleUser>();
+        public static List<objMoodleUser> moodleUsers = new List<objMoodleUser>();
 
-        public static List<objFormandos> htobjFormandosMain = new List<objFormandos>();
+        public static List<objFormando> htobjFormandosMain = new List<objFormando>();
 
         public static List<objSinc> htobjSinc = new List<objSinc>();
         public static FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);

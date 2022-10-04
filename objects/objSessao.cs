@@ -17,7 +17,7 @@ namespace SalasZoomNotificationFormadores.objects
         public string Estado { get; set; }
         public DateTime Hora_Inicio { get; set; }
         public DateTime Hora_Fim { get; set; }
-        public string versao_rowid { get; set; }
+        public string sessao_versao_rowid { get; set; }
         public string Modulo { get; set; }
         public decimal TotalHoras { get; set; }
         public string Formador { get; set; }
@@ -31,17 +31,21 @@ namespace SalasZoomNotificationFormadores.objects
         public int cod_Transporte { get; set; }
         public double preco_Transporte { get; set; }
         public int cod_Sala { get; set; }
+        public int cod_Sala2 { get; set; }
         public double preco_Sala { get; set; }
         public string notas { get; set; }
         public int FormacaoExternaID { get; set; }
-        public string CodFormador2 { get; set; }
-        public string CoFormador { get; set; }
+        public string codigoFormador2 { get; set; }
+        public string Formador2 { get; set; }
         public int Rowid_Accao { get; set; }
         public string TM { get; set; }
         public string TSV { get; set; }
         public string FormadorDistribuirLinks { get; set; }
         public string CodCordenador { get; set; }
-        public string CodFormador { get; set; }
+        public string codigoFormador { get; set; }
+
+        public string compELR { get; set; }
+        public string obs { get; set; }
     }
 
     public class objFormadores
@@ -53,7 +57,7 @@ namespace SalasZoomNotificationFormadores.objects
         public string Sexo { get; set; }
     }
 
-    public class objColaboradores
+    public class objColaborador
     {
         public string codigo_Colaborador { get; set; }
 
@@ -90,7 +94,7 @@ namespace SalasZoomNotificationFormadores.objects
         public DateTime DataHora { get; set; }
     }
 
-    class objFormandos
+    class objFormando
     {
         public string Formando { get; set; }
         public string Contribuinte { get; set; }
