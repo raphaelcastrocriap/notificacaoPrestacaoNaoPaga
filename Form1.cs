@@ -33,6 +33,8 @@ namespace SalasZoomNotificationFormadores
         private void Form1_Load(object sender, EventArgs e)
         {
             //horasyncman = new DateTime(2022, 9, 29, 14, 0, 0);
+           //horasyncman = new DateTime(2022, 10, 8, 8, 0, 0);
+
             horasyncman = DateTime.Now;
             Security.remote();
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
@@ -62,7 +64,7 @@ namespace SalasZoomNotificationFormadores
         {
             try
             {
-               
+
 
                 error = false;
                 richTextBox1.Clear();
@@ -87,13 +89,13 @@ namespace SalasZoomNotificationFormadores
                     Envia_emails_formadores();
                 }
                 SendEmail(richTextBox1.Text, "Notification Salas Zoom // Formadores - Emails enviados", true);
-            }
+        }
             catch (Exception e)
             {
                 error = true;
                 SendEmail(richTextBox1.Text + Environment.NewLine + e.Message, "Notification Salas Zoom // Formadores - ERROR", true);
-            }
-        }
+    }
+}
         private void GetHT_data(DateTime inicio, DateTime fim)
         {
             Formadores.Clear();
@@ -188,6 +190,7 @@ namespace SalasZoomNotificationFormadores
                     if (obj.Fim_Curso.Date == obj.Hora_Fim.Date) obj.InicioFim = "T";
 
                     db.htSessoes.Add(obj);
+                   
                 }
             }
         }
@@ -341,7 +344,7 @@ namespace SalasZoomNotificationFormadores
                 }
             }
 
-            
+
         }
         private void SendEmail(string body, string assunto = "", bool error = false)
         {
@@ -441,7 +444,7 @@ namespace SalasZoomNotificationFormadores
             {
                 //DateTime horasyncman = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 0, 0);
                 ////DateTime horasyncman = new DateTime(2022, 9, 30, 14, 0, 0);
-                bool CCP = sessao.RefAccao.Contains("CFPIF") || sessao.RefAccao.Contains("FM_EAD_21122020");
+                bool CCP = sessao.RefAccao.Contains("CFPIF") || sessao.RefAccao.Contains("FM_");
                 DateTime horasync = horasyncman.AddHours(9);
 
                 if (sessao.HoraInicio >= horasyncman && sessao.HoraInicio <= horasync)
@@ -480,7 +483,7 @@ namespace SalasZoomNotificationFormadores
                                 }
                             }
                         }
-                        
+
 
                         if (email1 != "")
                         {
@@ -498,13 +501,6 @@ namespace SalasZoomNotificationFormadores
 
                                 string horamodulo = sessao.HoraInicio.ToShortTimeString() + " às " + sessao.HoraFim.ToShortTimeString();
 
-                                //objSala sala = null;
-                                //int existesala = (from d in db.Salas where d.id.ToString() == sessao.CodSala.ToString() select d.id).Distinct().Count();
-                                //if (existesala > 0)
-                                //{
-                                //    sala = db.Salas.Where(x => x.id.ToString() == sessao.CodSala.ToString()).First();
-                                //}
-
                                 objSala itemSala = null;
                                 objSala itemSala1 = null;
                                 objSala itemSala2 = null;
@@ -514,7 +510,7 @@ namespace SalasZoomNotificationFormadores
                                 if (sessaosala2.cod_Sala2 > 0)
                                 {
                                     //hallar la session
-                                    
+
                                     itemSala2 = db.Salas.Find(x => x.id == sessaosala2.cod_Sala2);
                                 }
                                 if (itemSala1 != null)
@@ -527,13 +523,13 @@ namespace SalasZoomNotificationFormadores
                                     if (itemSala2.zoom)
                                         itemSala = itemSala2;
                                 }
-                                
 
 
-                                    //objSala itemSala = db.Salas.Find(x => x.id == sessao.CodSala);
+
+                                //objSala itemSala = db.Salas.Find(x => x.id == sessao.CodSala);
                                 DataRow meeting = null;
-                                 
-                                if (itemSala != null )
+
+                                if (itemSala != null)
                                 {
                                     if (itemSala.zoom)
                                         meeting = GetMeetingDB(sessao.Sessao_versao_rowid);
@@ -541,8 +537,7 @@ namespace SalasZoomNotificationFormadores
 
                                 if (itemSala != null)
                                 {
-                                    if (sessao.CodFormador == 604.ToString())
-                                        Console.WriteLine("");
+
                                     string linkRegistrant = "";
                                     //busco los links del alumno
                                     if (meeting != null)
@@ -550,60 +545,60 @@ namespace SalasZoomNotificationFormadores
                                         linkRegistrant = getLinksRegistrant(long.Parse(meeting[2].ToString()), sessao.CodFormador);
                                     }
                                     if (linkRegistrant != null && linkRegistrant != "")
-                                    { 
-                                    string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor ") + "<br/><br/>" + (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "<br/><br/>Estimamos que se encontre bem.<br/>Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" + sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>Para aceder à sala virtual, deverá entrar através do seguinte link:<br/><br/><a href=" + linkRegistrant + ">Link de acesso à sala virtual</a>" + "<br/><br/><a href=" + "https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(sessao.Formador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " style =\"font-face:arial;font-weight:bold;color:#fff;background-color:#1882d9;font-size:18px;text-decoration:none;line-height:2em;display:inline-block;text-align:center;border-radius:10px;border-color:#1882d9;border-style:solid;border-width:10px 20px\"> Solicitar ajuda ou apoio</a> " + "<br/><br/>Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail <a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico <strong>22 549 21 90.</strong><br/><br/><h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
-
-                                    mm.Body = body;
-                                    client.Send(mm);
-                                    mm.Dispose();
-
-                                    richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
-
-                                    //Envia sms
-                                    recipientWithName newSms = new recipientWithName();
-                                    Obj_logSend logSender = new Obj_logSend();
-
-                                    string numValidate = null;
-                                    if (telefone != null)
                                     {
-                                        numValidate = ValidarNum(telefone);
-                                        //numValidate = ValidarNum("912648984");
+                                        string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor ") + "<br/><br/>" + (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "<br/><br/>Estimamos que se encontre bem.<br/>Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" + sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>Para aceder à sala virtual, deverá entrar através do seguinte link:<br/><br/><a href=" + linkRegistrant + ">Link de acesso à sala virtual</a>" + "<br/><br/><a href=" + "https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(sessao.Formador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " style =\"font-face:arial;font-weight:bold;color:#fff;background-color:#1882d9;font-size:18px;text-decoration:none;line-height:2em;display:inline-block;text-align:center;border-radius:10px;border-color:#1882d9;border-style:solid;border-width:10px 20px\"> Solicitar ajuda ou apoio</a> " + "<br/><br/>Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail <a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico <strong>22 549 21 90.</strong><br/><br/><h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
 
-                                        if (numValidate != null)
+                                        mm.Body = body;
+                                        client.Send(mm);
+                                        mm.Dispose();
+
+                                        richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
+
+                                        //Envia sms
+                                        recipientWithName newSms = new recipientWithName();
+                                        Obj_logSend logSender = new Obj_logSend();
+
+                                        string numValidate = null;
+                                        if (telefone != null)
                                         {
-                                            newSms.msisdn = numValidate;
-                                            newSms.name = sessao.Formador;
+                                            numValidate = ValidarNum(telefone);
+                                            //numValidate = ValidarNum("912648984");
+
+                                            if (numValidate != null)
+                                            {
+                                                newSms.msisdn = numValidate;
+                                                newSms.name = sessao.Formador;
+                                            }
                                         }
-                                    }
 
-                                    if (newSms.msisdn != "")
-                                    {
-                                        if (newSms.msisdn != null)
+                                        if (newSms.msisdn != "")
                                         {
-                                            string bodysms = sessao.RefAccao.ToString() + " // aula: " + sessao.HoraInicio.ToShortDateString() + "\n\n" + (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") + (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "\n\nEstimamos que se encontre bem" + "\n\nServe o resente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " + sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental)" + "\n\nPara aceder à sala virtual, deverá entrar através do seguinte link: " + linkRegistrant + "\n\nPara solicitar apoio ou ajuda, deverá entrar através do seguinte link: https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(sessao.Formador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " \n\nPara qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " + emailtxtcoordenador + " e do seguinte contacto telefónico 22 549 21 90";
-
-                                            logsSenders.Clear();
                                             if (newSms.msisdn != null)
                                             {
-                                                logSender.Mensagem = bodysms;
-                                                logSender.Nome = newSms.name;
-                                                logSender.Numero = newSms.msisdn;
-                                                logSender.smsSenders.Add(newSms);
-                                                logsSenders.Add(logSender);
+                                                string bodysms = sessao.RefAccao.ToString() + " // aula: " + DateTime.Now.ToShortDateString() + "\n\n" + (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") + (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "\n\nEstimamos que se encontre bem" + "\n\nServe o resente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " + sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental)" + "\n\nPara aceder à sala virtual, deverá entrar através do seguinte link: " + linkRegistrant + "\n\nPara solicitar apoio ou ajuda, deverá entrar através do seguinte link: https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(sessao.Formador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " \n\nPara qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " + emailtxtcoordenador + " e do seguinte contacto telefónico 22 549 21 90";
+
+                                                logsSenders.Clear();
+                                                if (newSms.msisdn != null)
+                                                {
+                                                    logSender.Mensagem = bodysms;
+                                                    logSender.Nome = newSms.name;
+                                                    logSender.Numero = newSms.msisdn;
+                                                    logSender.smsSenders.Add(newSms);
+                                                    logsSenders.Add(logSender);
+                                                }
+
+                                                List<scheduleAlarm> smsS = new List<scheduleAlarm>();
+                                                scheduleAlarm envio = new scheduleAlarm();
+                                                envio.sendDate = DateTime.Now.ToString("yyyy-MM-ddTHH:mmZ");
+                                                envio.text = logsSenders[0].Mensagem;
+                                                envio.recipientsWithName = logsSenders[0].smsSenders.ToArray();
+                                                smsS.Add(envio);
+                                                smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString(); //principal
+
+                                                richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine + "\n";
                                             }
-
-                                            List<scheduleAlarm> smsS = new List<scheduleAlarm>();
-                                            scheduleAlarm envio = new scheduleAlarm();
-                                            envio.sendDate = DateTime.Now.ToString("yyyy-MM-ddTHH:mmZ");
-                                            envio.text = logsSenders[0].Mensagem;
-                                            envio.recipientsWithName = logsSenders[0].smsSenders.ToArray();
-                                            smsS.Add(envio);
-                                            smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString(); //principal
-
-                                            richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine + "\n";
                                         }
                                     }
-                                }
                                 }
                             }
                         }
@@ -639,7 +634,7 @@ namespace SalasZoomNotificationFormadores
             {
                 ////DateTime horasyncman = new DateTime(2022, 9, 30, 14, 0, 0);
                 //DateTime horasyncman = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 0, 0);
-                bool CCP = sessao.RefAccao.Contains("CFPIF") || sessao.RefAccao.Contains("FM_EAD_21122020");
+                bool CCP = sessao.RefAccao.Contains("CFPIF") || sessao.RefAccao.Contains("FM_");
 
                 DateTime horasync = horasyncman.AddHours(9);
 
@@ -690,8 +685,8 @@ namespace SalasZoomNotificationFormadores
                                 MailMessage mm = new MailMessage();
                                 mm.From = new MailAddress("Instituto CRIAP <" + Properties.Settings.Default.emailenvio + "> ");
 
-                                //mm.To.Add(email1.Trim());
-                                mm.To.Add("sandraaguilar@criap.com");
+                                mm.To.Add(email1.Trim());
+                                //mm.To.Add("sandraaguilar@criap.com");
                                 mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + sessao.HoraInicio.ToShortDateString();
                                 mm.IsBodyHtml = true;
                                 mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -699,14 +694,32 @@ namespace SalasZoomNotificationFormadores
 
                                 string horamodulo = sessao.HoraInicio.ToShortTimeString() + " às " + sessao.HoraFim.ToShortTimeString();
 
-                                //objSala sala = null;
-                                //int existesala = (from d in db.Salas where d.id.ToString() == hora.CodSala.ToString() select d.id).Distinct().Count();
-                                //if (existesala > 0)
-                                //{
-                                //    sala = db.Salas.Where(x => x.id.ToString() == hora.CodSala.ToString()).First();
-                                //}
+                                objSala itemSala = null;
+                                objSala itemSala1 = null;
+                                objSala itemSala2 = null;
+                                objSessao sessaosala2 = db.htSessoes.Find(x => x.sessao_versao_rowid == sessao.Sessao_versao_rowid);
+                                if (sessao.CodSala > 0)
+                                    itemSala1 = db.Salas.Find(x => x.id == sessao.CodSala);
+                                if (sessaosala2.cod_Sala2 > 0)
+                                {
+                                    //hallar la session
 
-                                objSala itemSala = db.Salas.Find(x => x.id == sessao.CodSala);
+                                    itemSala2 = db.Salas.Find(x => x.id == sessaosala2.cod_Sala2);
+                                }
+                                if (itemSala1 != null)
+                                {
+                                    if (itemSala1.zoom)
+                                        itemSala = itemSala1;
+                                }
+                                if (itemSala2 != null)
+                                {
+                                    if (itemSala2.zoom)
+                                        itemSala = itemSala2;
+                                }
+
+
+
+                                //objSala itemSala = db.Salas.Find(x => x.id == sessao.CodSala);
                                 DataRow meeting = null;
 
                                 if (itemSala != null)
@@ -717,61 +730,64 @@ namespace SalasZoomNotificationFormadores
 
                                 if (itemSala != null)
                                 {
-                                    string linkRegistrant = itemSala.link;
+                                    string linkRegistrant = "";
                                     //busco los links del alumno
                                     if (meeting != null)
                                     {
-                                        linkRegistrant = getLinksRegistrant(long.Parse(meeting[2].ToString()), sessao.CodFormador);
+                                        linkRegistrant = getLinksRegistrant(long.Parse(meeting[2].ToString()), sessao.CodFormador2);
                                     }
-                                    string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor ") + "<br/><br/>" + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "<br/><br/>Estimamos que se encontre bem.<br/>Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" + sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>Para aceder à sala virtual, deverá entrar através do seguinte link:<br/><br/><a href=" + linkRegistrant + ">Link de acesso à sala virtual</a>" + "<br/><br/><a href=" + "https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(nomeformador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " style =\"font-face:arial;font-weight:bold;color:#fff;background-color:#1882d9;font-size:18px;text-decoration:none;line-height:2em;display:inline-block;text-align:center;border-radius:10px;border-color:#1882d9;border-style:solid;border-width:10px 20px\"> Solicitar ajuda ou apoio</a> <br/><br/>Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail <a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico <strong>22 549 21 90.</strong><br/><br/><h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
-
-                                    mm.Body = body;
-                                    client.Send(mm);
-                                    mm.Dispose();
-
-                                    richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
-
-                                    //Envia sms
-                                    recipientWithName newSms = new recipientWithName();
-                                    Obj_logSend logSender = new Obj_logSend();
-
-                                    string numValidate = null;
-                                    if (telefone != null)
+                                    if (linkRegistrant != null && linkRegistrant != "")
                                     {
-                                        //numValidate = ValidarNum(telefone);
-                                        numValidate = ValidarNum("912648984");
-                                        if (numValidate != null)
+                                        string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor ") + "<br/><br/>" + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "<br/><br/>Estimamos que se encontre bem.<br/>Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" + sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>Para aceder à sala virtual, deverá entrar através do seguinte link:<br/><br/><a href=" + linkRegistrant + ">Link de acesso à sala virtual</a>" + "<br/><br/><a href=" + "https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(nomeformador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " style =\"font-face:arial;font-weight:bold;color:#fff;background-color:#1882d9;font-size:18px;text-decoration:none;line-height:2em;display:inline-block;text-align:center;border-radius:10px;border-color:#1882d9;border-style:solid;border-width:10px 20px\"> Solicitar ajuda ou apoio</a> <br/><br/>Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail <a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico <strong>22 549 21 90.</strong><br/><br/><h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
+
+                                        mm.Body = body;
+                                        client.Send(mm);
+                                        mm.Dispose();
+
+                                        richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
+
+                                        //Envia sms
+                                        recipientWithName newSms = new recipientWithName();
+                                        Obj_logSend logSender = new Obj_logSend();
+
+                                        string numValidate = null;
+                                        if (telefone != null)
                                         {
-                                            newSms.msisdn = numValidate;
-                                            newSms.name = nomeformador;
+                                            numValidate = ValidarNum(telefone);
+                                            //numValidate = ValidarNum("912648984");
+                                            if (numValidate != null)
+                                            {
+                                                newSms.msisdn = numValidate;
+                                                newSms.name = nomeformador;
+                                            }
                                         }
-                                    }
 
-                                    if (newSms.msisdn != "")
-                                    {
-                                        if (newSms.msisdn != null)
+                                        if (newSms.msisdn != "")
                                         {
-                                            string bodysms = sessao.RefAccao + " // aula: " + sessao.HoraInicio.ToShortDateString() + "\n\n" + ( sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "\n\nEstimamos que se encontre bem" + "\n\nServe o resente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " + sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental)" + "\n\nPara aceder à sala virtual, deverá entrar através do seguinte link: " + linkRegistrant + "\n\nPara solicitar apoio ou ajuda, deverá entrar através do seguinte link: https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(nomeformador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " \n\nPara qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " + emailtxtcoordenador + " e do seguinte contacto telefónico 22 549 21 90";
-
-                                            logsSenders.Clear();
                                             if (newSms.msisdn != null)
                                             {
-                                                logSender.Mensagem = bodysms;
-                                                logSender.Nome = newSms.name;
-                                                logSender.Numero = newSms.msisdn;
-                                                logSender.smsSenders.Add(newSms);
-                                                logsSenders.Add(logSender);
+                                                string bodysms = sessao.RefAccao + " // aula: " + DateTime.Now.ToShortDateString() + "\n\n" + (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "\n\nEstimamos que se encontre bem" + "\n\nServe o resente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " + sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental)" + "\n\nPara aceder à sala virtual, deverá entrar através do seguinte link: " + linkRegistrant + "\n\nPara solicitar apoio ou ajuda, deverá entrar através do seguinte link: https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(nomeformador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " \n\nPara qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " + emailtxtcoordenador + " e do seguinte contacto telefónico 22 549 21 90";
+
+                                                logsSenders.Clear();
+                                                if (newSms.msisdn != null)
+                                                {
+                                                    logSender.Mensagem = bodysms;
+                                                    logSender.Nome = newSms.name;
+                                                    logSender.Numero = newSms.msisdn;
+                                                    logSender.smsSenders.Add(newSms);
+                                                    logsSenders.Add(logSender);
+                                                }
+
+                                                List<scheduleAlarm> smsS = new List<scheduleAlarm>();
+                                                scheduleAlarm envio = new scheduleAlarm();
+                                                envio.sendDate = DateTime.Now.ToString("yyyy-MM-ddTHH:mmZ");
+                                                envio.text = logsSenders[0].Mensagem;
+                                                envio.recipientsWithName = logsSenders[0].smsSenders.ToArray();
+                                                smsS.Add(envio);
+                                                smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString();
+
+                                                richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine + "\n";
                                             }
-
-                                            List<scheduleAlarm> smsS = new List<scheduleAlarm>();
-                                            scheduleAlarm envio = new scheduleAlarm();
-                                            envio.sendDate = DateTime.Now.ToString("yyyy-MM-ddTHH:mmZ");
-                                            envio.text = logsSenders[0].Mensagem;
-                                            envio.recipientsWithName = logsSenders[0].smsSenders.ToArray();
-                                            smsS.Add(envio);
-                                            smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString();
-
-                                            richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine+"\n";
                                         }
                                     }
                                 }
@@ -783,6 +799,8 @@ namespace SalasZoomNotificationFormadores
         }
         private string getLinksRegistrant(long meetingID, string idFormandoHT)
         {
+            if (idFormandoHT == null)
+                idFormandoHT = "0";
             string subQuery = "select join_url from " + dbConnect.nomeTableRegistrants + " where meetingID = " + meetingID.ToString() + " and idHT = " + idFormandoHT;
             ;
             dbConnect.secretariaVirtual.ConnInit();
@@ -868,7 +886,7 @@ namespace SalasZoomNotificationFormadores
                 //DateTime horasyncman = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 0, 0);
                 ////DateTime horasyncman = new DateTime(2021, 9, 18, 6, 0, 0);
 
-                bool CCP = sessao.RefAccao.Contains("CFPIF") || sessao.RefAccao.Contains("FM_EAD_21122020");
+                bool CCP = sessao.RefAccao.Contains("CFPIF") || sessao.RefAccao.Contains("FM_");
                 int existe = (from d in Formadores where d.formadorID == sessao.CodFormador select d.Email).Distinct().Count();
 
                 if (existe > 0)
@@ -911,8 +929,8 @@ namespace SalasZoomNotificationFormadores
                         {
                             MailMessage mm = new MailMessage();
                             mm.From = new MailAddress("Instituto CRIAP <" + Properties.Settings.Default.emailenvio + "> ");
-                            //mm.To.Add(email1.Trim());
-                            mm.To.Add("sandraaguilar@criap.com");
+                            mm.To.Add(email1.Trim());
+                            //mm.To.Add("sandraaguilar@criap.com");
                             mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + horasyncman.ToShortDateString();
                             mm.IsBodyHtml = true;
                             mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -933,16 +951,29 @@ namespace SalasZoomNotificationFormadores
                                 }
                             }
 
-                            //objSala sala = null;
-                            //int existesala = (from d in db.Salas where d.id.ToString() == sessao.CodSala.ToString() select d.id).Distinct().Count();
-                            //if (existesala > 0)
-                            //{
-                            //    sala = db.Salas.Where(x => x.id.ToString() == sessao.CodSala.ToString()).First();
-                            //}
+                            objSala itemSala = null;
+                            objSala itemSala1 = null;
+                            objSala itemSala2 = null;
+                            objSessao sessaosala2 = db.htSessoes.Find(x => x.sessao_versao_rowid == sessao.Sessao_versao_rowid);
+                            if (sessao.CodSala > 0)
+                                itemSala1 = db.Salas.Find(x => x.id == sessao.CodSala);
+                            if (sessaosala2.cod_Sala2 > 0)
+                            {
+                                //hallar la session
 
-                            //if (sala != null)
-                            //{
-                            objSala itemSala = db.Salas.Find(x => x.id == sessao.CodSala);
+                                itemSala2 = db.Salas.Find(x => x.id == sessaosala2.cod_Sala2);
+                            }
+                            if (itemSala1 != null)
+                            {
+                                if (itemSala1.zoom)
+                                    itemSala = itemSala1;
+                            }
+                            if (itemSala2 != null)
+                            {
+                                if (itemSala2.zoom)
+                                    itemSala = itemSala2;
+                            }
+
                             DataRow meeting = null;
 
                             if (itemSala != null)
@@ -953,60 +984,71 @@ namespace SalasZoomNotificationFormadores
 
                             if (itemSala != null)
                             {
-                                string linkRegistrant = itemSala.link;
+                                if (itemSala.zoom)
+                                    meeting = GetMeetingDB(sessao.Sessao_versao_rowid);
+                            }
+                            
+                            if (itemSala != null)
+                            {
+                                string linkRegistrant = "";
                                 //busco los links del alumno
                                 if (meeting != null)
                                 {
+                                    if (meeting[2].ToString() == "86007008456")
+                                        Console.WriteLine("");
                                     linkRegistrant = getLinksRegistrant(long.Parse(meeting[2].ToString()), sessao.CodFormador);
                                 }
-                                string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor ") + "<br/><br/>" + (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "<br/><br/>Estimamos que se encontre bem.<br/>Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" + sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>Para aceder à sala virtual, deverá entrar através do seguinte link:<br/><br/><a href=" + linkRegistrant+">Link de acesso à sala virtual</a><br/><br/><a href=" + "https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(sessao.Formador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " style =\"font-face:arial;font-weight:bold;color:#fff;background-color:#1882d9;font-size:18px;text-decoration:none;line-height:2em;display:inline-block;text-align:center;border-radius:10px;border-color:#1882d9;border-style:solid;border-width:10px 20px\"> Solicitar ajuda ou apoio</a> <br/><br/>Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail <a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico <strong>22 549 21 90.</strong><br/><br/><h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
-
-                                mm.Body = body;
-                                client.Send(mm);
-                                mm.Dispose();
-                                richTextBox1.Text = richTextBox1.Text + (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
-
-                                //Envia sms
-                                recipientWithName newSms = new recipientWithName();
-                                Obj_logSend logSender = new Obj_logSend();
-
-                                string numValidate = null;
-                                if (telefone != null)
+                                if (linkRegistrant != null && linkRegistrant != "")
                                 {
-                                    //numValidate = ValidarNum(telefone);
-                                    numValidate = ValidarNum("912648984");
-                                    if (numValidate != null)
+                                    string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor ") + "<br/><br/>" + (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "<br/><br/>Estimamos que se encontre bem.<br/>Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" + sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>Para aceder à sala virtual, deverá entrar através do seguinte link:<br/><br/><a href=" + linkRegistrant + ">Link de acesso à sala virtual</a><br/><br/><a href=" + "https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(sessao.Formador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " style =\"font-face:arial;font-weight:bold;color:#fff;background-color:#1882d9;font-size:18px;text-decoration:none;line-height:2em;display:inline-block;text-align:center;border-radius:10px;border-color:#1882d9;border-style:solid;border-width:10px 20px\"> Solicitar ajuda ou apoio</a> <br/><br/>Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail <a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico <strong>22 549 21 90.</strong><br/><br/><h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
+
+                                    mm.Body = body;
+                                    client.Send(mm);
+                                    mm.Dispose();
+                                    richTextBox1.Text = richTextBox1.Text + (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
+
+                                    //Envia sms
+                                    recipientWithName newSms = new recipientWithName();
+                                    Obj_logSend logSender = new Obj_logSend();
+
+                                    string numValidate = null;
+                                    if (telefone != null)
                                     {
-                                        newSms.msisdn = numValidate;
-                                        newSms.name = sessao.Formador;
+                                        numValidate = ValidarNum(telefone);
+                                        //numValidate = ValidarNum("912648984");
+                                        if (numValidate != null)
+                                        {
+                                            newSms.msisdn = numValidate;
+                                            newSms.name = sessao.Formador;
+                                        }
                                     }
-                                }
 
-                                if (newSms.msisdn != "")
-                                {
-                                    if (newSms.msisdn != null)
+                                    if (newSms.msisdn != "")
                                     {
-                                        string bodysms = sessao.RefAccao + " // aula: " + sessao.HoraInicio.ToShortDateString() + "\n\n" + ( sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") + (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "\n\nEstimamos que se encontre bem" + "\n\nServe o resente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " + sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental)" + "\n\nPara aceder à sala virtual, deverá entrar através do seguinte link: " + linkRegistrant + "\n\nPara solicitar apoio ou ajuda, deverá entrar através do seguinte link: https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(sessao.Formador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " \n\nPara qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " + emailtxtcoordenador + " e do seguinte contacto telefónico 22 549 21 90";
-
-                                        logsSenders.Clear();
                                         if (newSms.msisdn != null)
                                         {
-                                            logSender.Mensagem = bodysms;
-                                            logSender.Nome = newSms.name;
-                                            logSender.Numero = newSms.msisdn;
-                                            logSender.smsSenders.Add(newSms);
-                                            logsSenders.Add(logSender);
+                                            string bodysms = sessao.RefAccao + " // aula: " + DateTime.Now.ToShortDateString() + "\n\n" + (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") + (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "\n\nEstimamos que se encontre bem" + "\n\nServe o resente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " + sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental)" + "\n\nPara aceder à sala virtual, deverá entrar através do seguinte link: " + linkRegistrant + "\n\nPara solicitar apoio ou ajuda, deverá entrar através do seguinte link: https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(sessao.Formador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " \n\nPara qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " + emailtxtcoordenador + " e do seguinte contacto telefónico 22 549 21 90";
+
+                                            logsSenders.Clear();
+                                            if (newSms.msisdn != null)
+                                            {
+                                                logSender.Mensagem = bodysms;
+                                                logSender.Nome = newSms.name;
+                                                logSender.Numero = newSms.msisdn;
+                                                logSender.smsSenders.Add(newSms);
+                                                logsSenders.Add(logSender);
+                                            }
+
+                                            List<scheduleAlarm> smsS = new List<scheduleAlarm>();
+                                            scheduleAlarm envio = new scheduleAlarm();
+                                            envio.sendDate = DateTime.Now.ToString("yyyy-MM-ddTHH:mmZ");
+                                            envio.text = logsSenders[0].Mensagem;
+                                            envio.recipientsWithName = logsSenders[0].smsSenders.ToArray();
+                                            smsS.Add(envio);
+                                            smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString();
+
+                                            richTextBox1.Text = richTextBox1.Text + (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine + "\n";
                                         }
-
-                                        List<scheduleAlarm> smsS = new List<scheduleAlarm>();
-                                        scheduleAlarm envio = new scheduleAlarm();
-                                        envio.sendDate = DateTime.Now.ToString("yyyy-MM-ddTHH:mmZ");
-                                        envio.text = logsSenders[0].Mensagem;
-                                        envio.recipientsWithName = logsSenders[0].smsSenders.ToArray();
-                                        smsS.Add(envio);
-                                        smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString();
-
-                                        richTextBox1.Text = richTextBox1.Text + (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine+"\n";
                                     }
                                 }
                             }
@@ -1039,7 +1081,7 @@ namespace SalasZoomNotificationFormadores
                 Sessao_versao_rowid = gcs.Key.sessao_versao_rowid
             };
 
-            
+
 
             foreach (var sessao in consolidatedChildren3)
             {
@@ -1047,7 +1089,7 @@ namespace SalasZoomNotificationFormadores
                 //DateTime horasyncman = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 0, 0);
 
                 int existe = (from d in Formadores where d.formadorID == sessao.CodFormador2 select d.Email).Distinct().Count();
-                bool CCP = sessao.RefAccao.Contains("CFPIF") || sessao.RefAccao.Contains("FM_EAD_21122020");
+                bool CCP = sessao.RefAccao.Contains("CFPIF") || sessao.RefAccao.Contains("FM_");
 
                 if (existe > 0)
                 {
@@ -1091,8 +1133,8 @@ namespace SalasZoomNotificationFormadores
                         {
                             MailMessage mm = new MailMessage();
                             mm.From = new MailAddress("Instituto CRIAP <" + Properties.Settings.Default.emailenvio + "> ");
-                            //mm.To.Add(email1.Trim());
-                            mm.To.Add("sandraaguilar@criap.com");
+                            mm.To.Add(email1.Trim());
+                            //mm.To.Add("sandraaguilar@criap.com");
                             mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + sessao.HoraInicio.ToShortDateString();
                             mm.IsBodyHtml = true;
                             mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -1100,16 +1142,29 @@ namespace SalasZoomNotificationFormadores
 
                             string horamodulo = sessao.HoraInicio.ToShortTimeString() + " às " + sessao.HoraFim.ToShortTimeString();
 
-                            //objSala sala = null;
-                            //int existesala = (from d in db.Salas where d.id.ToString() == hora.CodSala.ToString() select d.id).Distinct().Count();
-                            //if (existesala > 0)
-                            //{
-                            //    sala = db.Salas.Where(x => x.id.ToString() == hora.CodSala.ToString()).First();
-                            //}
+                            objSala itemSala = null;
+                            objSala itemSala1 = null;
+                            objSala itemSala2 = null;
+                            objSessao sessaosala2 = db.htSessoes.Find(x => x.sessao_versao_rowid == sessao.Sessao_versao_rowid);
+                            if (sessao.CodSala > 0)
+                                itemSala1 = db.Salas.Find(x => x.id == sessao.CodSala);
+                            if (sessaosala2.cod_Sala2 > 0)
+                            {
+                                //hallar la session
 
-                            //if (sala != null)
-                            //{
-                            objSala itemSala = db.Salas.Find(x => x.id == sessao.CodSala);
+                                itemSala2 = db.Salas.Find(x => x.id == sessaosala2.cod_Sala2);
+                            }
+                            if (itemSala1 != null)
+                            {
+                                if (itemSala1.zoom)
+                                    itemSala = itemSala1;
+                            }
+                            if (itemSala2 != null)
+                            {
+                                if (itemSala2.zoom)
+                                    itemSala = itemSala2;
+                            }
+
                             DataRow meeting = null;
 
                             if (itemSala != null)
@@ -1120,61 +1175,65 @@ namespace SalasZoomNotificationFormadores
 
                             if (itemSala != null)
                             {
-                                string linkRegistrant = itemSala.link;
+                                string linkRegistrant = "";
                                 //busco los links del alumno
                                 if (meeting != null)
                                 {
-                                    linkRegistrant = getLinksRegistrant(long.Parse(meeting[2].ToString()), sessao.CodFormador);
+                                    
+                                    linkRegistrant = getLinksRegistrant(long.Parse(meeting[2].ToString()), sessao.CodFormador2);
                                 }
-                                string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor ") + "<br/><br/>" + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "<br/><br/>Estimamos que se encontre bem.<br/>Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" + sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>Para aceder à sala virtual, deverá entrar através do seguinte link:<br/><br/><a href=" + linkRegistrant + ">Link de acesso à sala virtual</a><br/><br/><a href=" + "https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(nomeformador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " style =\"font-face:arial;font-weight:bold;color:#fff;background-color:#1882d9;font-size:18px;text-decoration:none;line-height:2em;display:inline-block;text-align:center;border-radius:10px;border-color:#1882d9;border-style:solid;border-width:10px 20px\"> Solicitar ajuda ou apoio</a> <br/><br/>Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail <a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico <strong>22 549 21 90.</strong><br/><br/><h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
-
-                                mm.Body = body;
-                                client.Send(mm);
-                                mm.Dispose();
-
-                                richTextBox1.Text = richTextBox1.Text + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
-
-                                //Envia sms
-                                recipientWithName newSms = new recipientWithName();
-                                Obj_logSend logSender = new Obj_logSend();
-
-                                string numValidate = null;
-                                if (telefone != null)
+                                if (linkRegistrant != null && linkRegistrant != "")
                                 {
-                                    //numValidate = ValidarNum(telefone);
-                                    numValidate = ValidarNum("912648984");
-                                    if (numValidate != null)
+                                    string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor ") + "<br/><br/>" + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "<br/><br/>Estimamos que se encontre bem.<br/>Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" + sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>Para aceder à sala virtual, deverá entrar através do seguinte link:<br/><br/><a href=" + linkRegistrant + ">Link de acesso à sala virtual</a><br/><br/><a href=" + "https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(nomeformador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " style =\"font-face:arial;font-weight:bold;color:#fff;background-color:#1882d9;font-size:18px;text-decoration:none;line-height:2em;display:inline-block;text-align:center;border-radius:10px;border-color:#1882d9;border-style:solid;border-width:10px 20px\"> Solicitar ajuda ou apoio</a> <br/><br/>Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail <a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico <strong>22 549 21 90.</strong><br/><br/><h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
+
+                                    mm.Body = body;
+                                    client.Send(mm);
+                                    mm.Dispose();
+
+                                    richTextBox1.Text = richTextBox1.Text + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
+
+                                    //Envia sms
+                                    recipientWithName newSms = new recipientWithName();
+                                    Obj_logSend logSender = new Obj_logSend();
+
+                                    string numValidate = null;
+                                    if (telefone != null)
                                     {
-                                        newSms.msisdn = numValidate;
-                                        newSms.name = nomeformador;
+                                        numValidate = ValidarNum(telefone);
+                                        //numValidate = ValidarNum("912648984");
+                                        if (numValidate != null)
+                                        {
+                                            newSms.msisdn = numValidate;
+                                            newSms.name = nomeformador;
+                                        }
                                     }
-                                }
 
-                                if (newSms.msisdn != "")
-                                {
-                                    if (newSms.msisdn != null)
+                                    if (newSms.msisdn != "")
                                     {
-                                        string bodysms = sessao.RefAccao + " // aula: " + sessao.HoraInicio.ToShortDateString() + "\n\n" + (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "\n\nEstimamos que se encontre bem\n\nServe o resente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " + sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental)\n\nPara aceder à sala virtual, deverá entrar através do seguinte link: " + linkRegistrant + "\n\nPara solicitar apoio ou ajuda, deverá entrar através do seguinte link: https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(nomeformador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " \n\nPara qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " + emailtxtcoordenador + " e do seguinte contacto telefónico 22 549 21 90";
-
-                                        logsSenders.Clear();
                                         if (newSms.msisdn != null)
                                         {
-                                            logSender.Mensagem = bodysms;
-                                            logSender.Nome = newSms.name;
-                                            logSender.Numero = newSms.msisdn;
-                                            logSender.smsSenders.Add(newSms);
-                                            logsSenders.Add(logSender);
+                                            string bodysms = sessao.RefAccao + " // aula: " + DateTime.Now.ToShortDateString() + "\n\n" + (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "\n\nEstimamos que se encontre bem\n\nServe o resente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " + sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental)\n\nPara aceder à sala virtual, deverá entrar através do seguinte link: " + linkRegistrant + "\n\nPara solicitar apoio ou ajuda, deverá entrar através do seguinte link: https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(nomeformador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " \n\nPara qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " + emailtxtcoordenador + " e do seguinte contacto telefónico 22 549 21 90";
+
+                                            logsSenders.Clear();
+                                            if (newSms.msisdn != null)
+                                            {
+                                                logSender.Mensagem = bodysms;
+                                                logSender.Nome = newSms.name;
+                                                logSender.Numero = newSms.msisdn;
+                                                logSender.smsSenders.Add(newSms);
+                                                logsSenders.Add(logSender);
+                                            }
+
+                                            List<scheduleAlarm> smsS = new List<scheduleAlarm>();
+                                            scheduleAlarm envio = new scheduleAlarm();
+                                            envio.sendDate = DateTime.Now.ToString("yyyy-MM-ddTHH:mmZ");
+                                            envio.text = logsSenders[0].Mensagem;
+                                            envio.recipientsWithName = logsSenders[0].smsSenders.ToArray();
+                                            smsS.Add(envio);
+                                            smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString();
+
+                                            richTextBox1.Text = richTextBox1.Text + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine + "\n";
                                         }
-
-                                        List<scheduleAlarm> smsS = new List<scheduleAlarm>();
-                                        scheduleAlarm envio = new scheduleAlarm();
-                                        envio.sendDate = DateTime.Now.ToString("yyyy-MM-ddTHH:mmZ");
-                                        envio.text = logsSenders[0].Mensagem;
-                                        envio.recipientsWithName = logsSenders[0].smsSenders.ToArray();
-                                        smsS.Add(envio);
-                                        smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString();
-
-                                        richTextBox1.Text = richTextBox1.Text + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine+"\n";
                                     }
                                 }
                             }
