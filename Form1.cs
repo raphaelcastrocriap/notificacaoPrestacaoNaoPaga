@@ -93,9 +93,16 @@ namespace SalasZoomNotificationFormadores
             catch (Exception e)
             {
                 error = true;
-                SendEmail(richTextBox1.Text + Environment.NewLine + e.Message, "Notification Salas Zoom // Formadores - ERROR", true);
-    }
-}
+                if (e.Message.Contains("Foi estabelecida ligação com êxito ao servidor, mas, em seguida, ocorreu um erro durante o handshake anterior ao início de sessão"))
+                {
+                    SendEmail(richTextBox1.Text + "\n\n" + e.ToString()+"\n"+ "IMPORTANTE: Será executada a rotina outra vez...", "Notification Salas Zoom // Formadores - HANDSHAKE ERROR", true);
+                    ExecuteSync();
+                }
+                else
+                    SendEmail(richTextBox1.Text + "\n\n" + e.ToString(), "Notification Salas Zoom // Formadores - ERROR ", true);
+
+            }
+        }
         private void GetHT_data(DateTime inicio, DateTime fim)
         {
             Formadores.Clear();
