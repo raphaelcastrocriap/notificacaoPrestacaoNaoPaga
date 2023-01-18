@@ -15,7 +15,7 @@ namespace SalasZoomNotificationFormadores.connects
         public static connectHT secretariaVirtual = new connectHT(Security.settings.ht_HName, "secretariaVirtual", Security.settings.ht_UName, Security.settings.ht_Pass);
 
         public static Connect_Moodle_Server MoodleConnect = new Connect_Moodle_Server(Security.settings.m_HName, Security.settings.m_UName, Security.settings.m_Pass, Security.settings.m_DBName);
-        //public static string nomeTableCorDados = "cor_Dados_test";
+        
         public static String nomeTableCorDados = "cor_Dados";
 
         

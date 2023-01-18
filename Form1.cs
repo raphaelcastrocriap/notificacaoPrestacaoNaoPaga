@@ -18,7 +18,7 @@ namespace SalasZoomNotificationFormadores
 {
     public partial class Form1 : Form
     {
-        public bool error = false;
+        public bool error = false, teste;
         public RichTextBox errorTextBox = new RichTextBox(), newCursoTextBox = new RichTextBox();
         public static List<objFormadores> Formadores = new List<objFormadores>();
         authentication credenciais = new authentication();
@@ -33,9 +33,12 @@ namespace SalasZoomNotificationFormadores
         private void Form1_Load(object sender, EventArgs e)
         {
             //horasyncman = new DateTime(2022, 9, 29, 14, 0, 0);
-           //horasyncman = new DateTime(2022, 10, 8, 8, 0, 0);
-
-            horasyncman = DateTime.Now;
+            //horasyncman = new DateTime(2022, 10, 8, 8, 0, 0);
+            teste = false;
+            if (!teste)
+                horasyncman = DateTime.Now;
+            else
+                horasyncman = new DateTime(2023, 1, 18, 14, 0, 0);
             Security.remote();
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
             Text += " V." + v.Major.ToString() + "." + v.Minor.ToString() + "." + v.Build.ToString();
@@ -89,13 +92,13 @@ namespace SalasZoomNotificationFormadores
                     Envia_emails_formadores();
                 }
                 SendEmail(richTextBox1.Text, "Notification Salas Zoom // Formadores - Emails enviados", true);
-        }
+            }
             catch (Exception e)
             {
                 error = true;
                 if (e.Message.Contains("Foi estabelecida ligação com êxito ao servidor, mas, em seguida, ocorreu um erro durante o handshake anterior ao início de sessão"))
                 {
-                    SendEmail(richTextBox1.Text + "\n\n" + e.ToString()+"\n"+ "IMPORTANTE: Será executada a rotina outra vez...", "Notification Salas Zoom // Formadores - HANDSHAKE ERROR", true);
+                    SendEmail(richTextBox1.Text + "\n\n" + e.ToString() + "\n" + "IMPORTANTE: Será executada a rotina outra vez...", "Notification Salas Zoom // Formadores - HANDSHAKE ERROR", true);
                     ExecuteSync();
                 }
                 else
@@ -197,7 +200,7 @@ namespace SalasZoomNotificationFormadores
                     if (obj.Fim_Curso.Date == obj.Hora_Fim.Date) obj.InicioFim = "T";
 
                     db.htSessoes.Add(obj);
-                   
+
                 }
             }
         }
@@ -366,11 +369,15 @@ namespace SalasZoomNotificationFormadores
             MailMessage mm = new MailMessage();
             mm.From = new MailAddress("Instituto CRIAP <" + Properties.Settings.Default.emailenvio + "> ");
 
-            mm.To.Add("ritagoncalves@criap.com");
-            mm.To.Add("geral@criap.com");
-            mm.To.Add("luisgraca@criap.com");
-            mm.To.Add("informatica@criap.com");
-            //mm.To.Add("sandraaguilar@criap.com");
+            if (!teste)
+            {
+                mm.To.Add("ritagoncalves@criap.com");
+                mm.To.Add("geral@criap.com");
+                mm.To.Add("luisgraca@criap.com");
+                mm.To.Add("informatica@criap.com");
+            }
+            else
+                mm.To.Add("sandraaguilar@criap.com");
             mm.Subject = assunto + " // " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToShortTimeString();
             mm.IsBodyHtml = false;
             mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -498,9 +505,10 @@ namespace SalasZoomNotificationFormadores
                             {
                                 MailMessage mm = new MailMessage();
                                 mm.From = new MailAddress("Instituto CRIAP <" + Properties.Settings.Default.emailenvio + "> ");
-
-                                mm.To.Add(email1.Trim());
-                                //mm.To.Add("sandraaguilar@criap.com");
+                                if (!teste)
+                                    mm.To.Add(email1.Trim());
+                                else
+                                    mm.To.Add("sandraaguilar@criap.com");
                                 mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + sessao.HoraInicio.ToShortDateString();
                                 mm.IsBodyHtml = true;
                                 mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -568,8 +576,10 @@ namespace SalasZoomNotificationFormadores
                                         string numValidate = null;
                                         if (telefone != null)
                                         {
-                                            numValidate = ValidarNum(telefone);
-                                            //numValidate = ValidarNum("912648984");
+                                            if (!teste)
+                                                numValidate = ValidarNum(telefone);
+                                            else
+                                                numValidate = ValidarNum("912648984");
 
                                             if (numValidate != null)
                                             {
@@ -600,12 +610,16 @@ namespace SalasZoomNotificationFormadores
                                                 envio.text = logsSenders[0].Mensagem;
                                                 envio.recipientsWithName = logsSenders[0].smsSenders.ToArray();
                                                 smsS.Add(envio);
-                                                smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString(); //principal
+                                                if (!teste)
+                                                    smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString(); //principal
 
                                                 richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine + "\n";
                                             }
                                         }
                                     }
+                                    else
+                                        richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | NÃO FOI NOTIFICADO, NÃO TEM REGISTO NA MEETING , ALTERAÇÃO DE FORMADOR " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
+
                                 }
                             }
                         }
@@ -691,9 +705,10 @@ namespace SalasZoomNotificationFormadores
                             {
                                 MailMessage mm = new MailMessage();
                                 mm.From = new MailAddress("Instituto CRIAP <" + Properties.Settings.Default.emailenvio + "> ");
-
-                                mm.To.Add(email1.Trim());
-                                //mm.To.Add("sandraaguilar@criap.com");
+                                if (!teste)
+                                    mm.To.Add(email1.Trim());
+                                else
+                                    mm.To.Add("sandraaguilar@criap.com");
                                 mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + sessao.HoraInicio.ToShortDateString();
                                 mm.IsBodyHtml = true;
                                 mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -760,8 +775,10 @@ namespace SalasZoomNotificationFormadores
                                         string numValidate = null;
                                         if (telefone != null)
                                         {
-                                            numValidate = ValidarNum(telefone);
-                                            //numValidate = ValidarNum("912648984");
+                                            if (!teste)
+                                                numValidate = ValidarNum(telefone);
+                                            else
+                                                numValidate = ValidarNum("912648984");
                                             if (numValidate != null)
                                             {
                                                 newSms.msisdn = numValidate;
@@ -791,12 +808,16 @@ namespace SalasZoomNotificationFormadores
                                                 envio.text = logsSenders[0].Mensagem;
                                                 envio.recipientsWithName = logsSenders[0].smsSenders.ToArray();
                                                 smsS.Add(envio);
-                                                smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString();
+                                                if (!teste)
+                                                    smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString();
 
                                                 richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine + "\n";
                                             }
                                         }
                                     }
+                                    else
+                                        richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | NÃO FOI NOTIFICADO, NÃO TEM REGISTO NA MEETING , ALTERAÇÃO DE FORMADOR " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
+
                                 }
                             }
                         }
@@ -814,9 +835,19 @@ namespace SalasZoomNotificationFormadores
             SqlDataAdapter adapter = new SqlDataAdapter(subQuery, dbConnect.secretariaVirtual.Conn);
             DataTable subData = new DataTable();
             adapter.Fill(subData);
-            DataRow link = subData.AsEnumerable().ToList().First();
             dbConnect.secretariaVirtual.ConnEnd();
-            return link[0].ToString();
+            try
+            {
+                DataRow link = subData.AsEnumerable().ToList().First();
+                return link[0].ToString();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+
+
         }
         public DataRow GetMeetingDB(string sessao_versao_rowid)
         {
@@ -936,8 +967,10 @@ namespace SalasZoomNotificationFormadores
                         {
                             MailMessage mm = new MailMessage();
                             mm.From = new MailAddress("Instituto CRIAP <" + Properties.Settings.Default.emailenvio + "> ");
-                            mm.To.Add(email1.Trim());
-                            //mm.To.Add("sandraaguilar@criap.com");
+                            if (!teste)
+                                mm.To.Add(email1.Trim());
+                            else
+                                mm.To.Add("sandraaguilar@criap.com");
                             mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + horasyncman.ToShortDateString();
                             mm.IsBodyHtml = true;
                             mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -994,15 +1027,14 @@ namespace SalasZoomNotificationFormadores
                                 if (itemSala.zoom)
                                     meeting = GetMeetingDB(sessao.Sessao_versao_rowid);
                             }
-                            
+
                             if (itemSala != null)
                             {
                                 string linkRegistrant = "";
                                 //busco los links del alumno
                                 if (meeting != null)
                                 {
-                                    if (meeting[2].ToString() == "86007008456")
-                                        Console.WriteLine("");
+
                                     linkRegistrant = getLinksRegistrant(long.Parse(meeting[2].ToString()), sessao.CodFormador);
                                 }
                                 if (linkRegistrant != null && linkRegistrant != "")
@@ -1021,8 +1053,10 @@ namespace SalasZoomNotificationFormadores
                                     string numValidate = null;
                                     if (telefone != null)
                                     {
-                                        numValidate = ValidarNum(telefone);
-                                        //numValidate = ValidarNum("912648984");
+                                        if (!teste)
+                                            numValidate = ValidarNum(telefone);
+                                        else
+                                            numValidate = ValidarNum("912648984");
                                         if (numValidate != null)
                                         {
                                             newSms.msisdn = numValidate;
@@ -1052,12 +1086,16 @@ namespace SalasZoomNotificationFormadores
                                             envio.text = logsSenders[0].Mensagem;
                                             envio.recipientsWithName = logsSenders[0].smsSenders.ToArray();
                                             smsS.Add(envio);
-                                            smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString();
+                                            if (!teste)
+                                                smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString();
 
                                             richTextBox1.Text = richTextBox1.Text + (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine + "\n";
                                         }
                                     }
                                 }
+                                else
+                                    richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | NÃO FOI NOTIFICADO, NÃO TEM REGISTO NA MEETING , ALTERAÇÃO DE FORMADOR " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
+
                             }
                         }
                     }
@@ -1140,8 +1178,10 @@ namespace SalasZoomNotificationFormadores
                         {
                             MailMessage mm = new MailMessage();
                             mm.From = new MailAddress("Instituto CRIAP <" + Properties.Settings.Default.emailenvio + "> ");
-                            mm.To.Add(email1.Trim());
-                            //mm.To.Add("sandraaguilar@criap.com");
+                            if (!teste)
+                                mm.To.Add(email1.Trim());
+                            else
+                                mm.To.Add("sandraaguilar@criap.com");
                             mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + sessao.HoraInicio.ToShortDateString();
                             mm.IsBodyHtml = true;
                             mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -1186,7 +1226,7 @@ namespace SalasZoomNotificationFormadores
                                 //busco los links del alumno
                                 if (meeting != null)
                                 {
-                                    
+
                                     linkRegistrant = getLinksRegistrant(long.Parse(meeting[2].ToString()), sessao.CodFormador2);
                                 }
                                 if (linkRegistrant != null && linkRegistrant != "")
@@ -1206,8 +1246,10 @@ namespace SalasZoomNotificationFormadores
                                     string numValidate = null;
                                     if (telefone != null)
                                     {
-                                        numValidate = ValidarNum(telefone);
-                                        //numValidate = ValidarNum("912648984");
+                                        if (!teste)
+                                            numValidate = ValidarNum(telefone);
+                                        else
+                                            numValidate = ValidarNum("912648984");
                                         if (numValidate != null)
                                         {
                                             newSms.msisdn = numValidate;
@@ -1237,12 +1279,16 @@ namespace SalasZoomNotificationFormadores
                                             envio.text = logsSenders[0].Mensagem;
                                             envio.recipientsWithName = logsSenders[0].smsSenders.ToArray();
                                             smsS.Add(envio);
-                                            smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString();
+                                            if (!teste)
+                                                smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString();
 
                                             richTextBox1.Text = richTextBox1.Text + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine + "\n";
                                         }
                                     }
                                 }
+                                else
+                                    richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | NÃO FOI NOTIFICADO, NÃO TEM REGISTO NA MEETING , ALTERAÇÃO DE FORMADOR " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
+
                             }
                         }
                     }
