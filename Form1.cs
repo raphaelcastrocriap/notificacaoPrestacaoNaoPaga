@@ -25,6 +25,7 @@ namespace SalasZoomNotificationFormadores
         List<Obj_logSend> logsSenders = new List<Obj_logSend>();
         SMSByMailSEIService smsByMailSEIService = new SMSByMailSEIService();
         DateTime horasyncman;
+        string mensagemInfo = "";
 
         public Form1()
         {
@@ -34,7 +35,7 @@ namespace SalasZoomNotificationFormadores
         {
             //horasyncman = new DateTime(2022, 9, 29, 14, 0, 0);
             //horasyncman = new DateTime(2022, 10, 8, 8, 0, 0);
-            teste = true;
+            teste = false;
             if (!teste)
                 horasyncman = DateTime.Now;
             else
@@ -42,6 +43,9 @@ namespace SalasZoomNotificationFormadores
             Security.remote();
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
             Text += " V." + v.Major.ToString() + "." + v.Minor.ToString() + "." + v.Build.ToString();
+
+            string dt = @" <br><br><font size=""-2"">Controlo de versão: " + " V." + v.Major.ToString() + "." + v.Minor.ToString() + "." + v.Build.ToString() + " Assembly built date: " + System.IO.File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location) + " by sa";
+            mensagemInfo += " \r\n" + dt;
             string[] passedInArgs = Environment.GetCommandLineArgs();
 
             if (passedInArgs.Contains("-a") || passedInArgs.Contains("-A"))
@@ -372,6 +376,7 @@ namespace SalasZoomNotificationFormadores
             if (!teste)
             {
                 mm.To.Add("ritagoncalves@criap.com");
+                mm.To.Add("franciscaalmeida@criap.com");
                 mm.To.Add("geral@criap.com");
                 mm.To.Add("luisgraca@criap.com");
                 mm.To.Add("informatica@criap.com");
@@ -379,10 +384,10 @@ namespace SalasZoomNotificationFormadores
             else
                 mm.To.Add("sandraaguilar@criap.com");
             mm.Subject = assunto + " // " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToShortTimeString();
-            mm.IsBodyHtml = false;
+            mm.IsBodyHtml = true;
             mm.BodyEncoding = UTF8Encoding.UTF8;
             mm.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
-            mm.Body = body;
+            mm.Body = body+ mensagemInfo;
             client.Send(mm);
         }
         private void Button2_Click_1(object sender, EventArgs e)

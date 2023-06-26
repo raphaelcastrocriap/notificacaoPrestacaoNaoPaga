@@ -52,10 +52,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>A31C721CA5CE0AA865C4C87DE482FAC641F5CA27</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>17EB213EBB81538F5033C94901EBB6BC3187DDDE</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>SalasZoomNotificationFormadores_1_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>SalasZoomNotificationFormadores_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -164,6 +164,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <None Include="SalasZoomNotificationFormadores_1_TemporaryKey.pfx" />
+    <None Include="SalasZoomNotificationFormadores_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
