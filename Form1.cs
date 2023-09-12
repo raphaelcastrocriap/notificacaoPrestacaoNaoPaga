@@ -13,6 +13,7 @@ using SalasZoomNotificationFormadores.objects;
 using System.Text.RegularExpressions;
 using SMSbyMail.SMSbyMailWS;
 using System.Diagnostics;
+using System.Threading;
 
 namespace SalasZoomNotificationFormadores
 {
@@ -70,9 +71,7 @@ namespace SalasZoomNotificationFormadores
         private void ExecuteSync()
         {
             try
-            {
-
-
+            {               
                 error = false;
                 richTextBox1.Clear();
                 errorTextBox.Clear();
@@ -100,9 +99,19 @@ namespace SalasZoomNotificationFormadores
             catch (Exception e)
             {
                 error = true;
+                TimeSpan delay = new TimeSpan(0, 5, 0);
                 if (e.Message.Contains("Foi estabelecida ligação com êxito ao servidor, mas, em seguida, ocorreu um erro durante o handshake anterior ao início de sessão"))
                 {
-                    SendEmail(richTextBox1.Text + "\n\n" + e.ToString() + "\n" + "IMPORTANTE: Será executada a rotina outra vez...", "Notification Salas Zoom // Formadores - HANDSHAKE ERROR", true);
+                    SendEmail(richTextBox1.Text + "\n\n" + e.ToString() + "\n" + "IMPORTANTE: Em 5 min será executada a rotina outra vez...", "Notification Salas Zoom // Formadores - HANDSHAKE ERROR", true);
+                    
+                    Thread.Sleep(delay);
+                    ExecuteSync();
+                }
+                else if (e.Message.Contains("Não foi possível criar um canal seguro SSL/TLS"))
+                {
+                    SendEmail(richTextBox1.Text + "\n\n" + e.ToString() + "\n" + "IMPORTANTE: Em 5 min será executada a rotina outra vez...", "Notification Salas Zoom // Formadores - canal seguro SSL/TLS", true);
+                    
+                    Thread.Sleep(delay);
                     ExecuteSync();
                 }
                 else
