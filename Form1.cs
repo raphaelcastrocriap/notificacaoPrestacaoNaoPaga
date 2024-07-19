@@ -1215,7 +1215,7 @@ namespace SalasZoomNotificationFormadores
                             if (!teste)
                                 mm.To.Add(email1.Trim());
                             else
-                                mm.To.Add("domingosreis@criap.com");
+                                mm.To.Add("assistenciatecnica@criap.com");
                             mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + sessao.HoraInicio.ToShortDateString();
                             mm.IsBodyHtml = true;
                             mm.BodyEncoding = UTF8Encoding.UTF8;
