@@ -863,6 +863,7 @@ namespace SalasZoomNotificationFormadores
                                                                 "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + "\n\n" +
                                                                 "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " +
                                                                 emailtxtcoordenador + " e do seguinte contacto telefónico 22 549 21 90";
+
                                                 logsSenders.Clear();
                                                 if (newSms.msisdn != null)
                                                 {
@@ -1330,6 +1331,7 @@ namespace SalasZoomNotificationFormadores
                                 }
                                 if (linkRegistrant != null && linkRegistrant != "")
                                 {
+
                                     string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor ") + "<br/><br/>" +
                                                   (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "<br/><br/>" +
                                                   "Estimamos que se encontre bem.<br/>Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" +
@@ -1341,6 +1343,7 @@ namespace SalasZoomNotificationFormadores
                                                   "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "' " +
                                                   "style='font-face:arial;font-weight:bold;color:#fff;background-color:#1882d9;font-size:18px;text-decoration:none;line-height:2em;display:inline-block;text-align:center;border-radius:10px;border-color:#1882d9;border-style:solid;border-width:10px 20px'>" +
                                                   "Solicitar ajuda ou apoio</a> <br/><br/>Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail <a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico <strong>22 549 21 90.</strong><br/><br/><h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
+
                                     mm.Body = body;
                                     client.Send(mm);
                                     mm.Dispose();
