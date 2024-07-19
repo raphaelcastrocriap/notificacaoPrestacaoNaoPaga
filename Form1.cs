@@ -568,7 +568,7 @@ namespace SalasZoomNotificationFormadores
                                 {
 
                                     string linkRegistrant = "";
-                                    //busco los links del alumno
+                                    //busco los links del alumnos
                                     if (meeting != null)
                                     {
                                         linkRegistrant = getLinksRegistrant(long.Parse(meeting[2].ToString()), sessao.CodFormador);
