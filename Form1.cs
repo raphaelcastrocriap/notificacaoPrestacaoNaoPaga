@@ -686,8 +686,8 @@ namespace SalasZoomNotificationFormadores
                                                 "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
                                                 "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "Link de acesso</a><br/><br/>" + "e clicar no botão.<br/><br/>" + "<img src='data:image/png;base64," + RetornaImgBase64("C:\\Users\\domingosreis\\Desktop\\entrarnozoom .png") + "'><br/><br/>" +
 
-              "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
-              "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
+                                                 "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
+                                                "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
 
                                                 logsSenders.Clear();
                                                 if (newSms.msisdn != null)
@@ -1222,8 +1222,8 @@ namespace SalasZoomNotificationFormadores
                                             "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
                                             "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "Link de acesso</a><br/><br/>" + "e clicar no botão.<br/><br/>" + "<img src='data:image/png;base64," + RetornaImgBase64("C:\\Users\\domingosreis\\Desktop\\entrarnozoom .png") + "'><br/><br/>" +
 
-              "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
-              "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
+                                            "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
+                                            "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
 
 
                                             logsSenders.Clear();
@@ -1397,15 +1397,15 @@ namespace SalasZoomNotificationFormadores
                                                   "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
                                                   "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "Link de acesso</a><br/><br/>" + "e clicar no botão.<br/><br/>" + "<img src='data:image/png;base64," + RetornaImgBase64("C:\\Users\\domingosreis\\Desktop\\entrarnozoom .png") + "'><br/><br/>" +
 
-              "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
-              "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
+                                                 "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
+                                                 "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
                                     mm.Body = body;
                                     client.Send(mm);
                                     mm.Dispose();
 
                                     richTextBox1.Text = richTextBox1.Text + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
 
-                                    //Envia sms
+                                    //Envia smss
                                     recipientWithName newSms = new recipientWithName();
                                     Obj_logSend logSender = new Obj_logSend();
 
@@ -1440,8 +1440,8 @@ namespace SalasZoomNotificationFormadores
                                             "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
                                             "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "Link de acesso</a><br/><br/>" + "e clicar no botão.<br/><br/>" + "<img src='data:image/png;base64," + RetornaImgBase64("C:\\Users\\domingosreis\\Desktop\\entrarnozoom .png") + "'><br/><br/>" +
 
-              "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
-              "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
+                                             "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
+                                            "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
                                             logsSenders.Clear();
                                             if (newSms.msisdn != null)
                                             {
