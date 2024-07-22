@@ -577,23 +577,18 @@ namespace SalasZoomNotificationFormadores
                                     {
 
                                         string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor ") + "<br/><br/>" +
-
-
-                                                      (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "<br/><br/>" +
-                                                      "Estimamos que se encontre bem.<br/>" +
-                                                      "Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" +
-                                                      sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>" +
-                                                      "Para aceder à sala virtual, deverá entrar através do seguinte link:<br/><br/>" +
-                                                      "<a href='http://criapva.com/?id=" + itemSala.id +
-                                                      "&formador=" + Uri.EscapeDataString(sessao.Formador) +
-                                                      "&ref=" + sessao.RefAccao +
-                                                      "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
-                                                      "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "' " +
-                                                      "style='font-face:arial;font-weight:bold;color:#fff;background-color:#1882d9;font-size:18px;text-decoration:none;line-height:2em;display:inline-block;text-align:center;border-radius:10px;border-color:#1882d9;border-style:solid;border-width:10px 20px'>" +
-                                                      "Solicitar ajuda ou apoio</a><br/><br/>" +
-                                                      "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " +
-                                                      "<a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico <strong>22 549 21 90.</strong><br/><br/>" +
-                                                      "<h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
+              (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "<br/><br/>" +
+              "Estimamos que se encontre bem.<br/>" +
+              "Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" +
+              sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>" +
+              "Para aceder à sala virtual, deverá aceder a:<br/><br/>" + "<a href='http://criapva.com/?id=" + itemSala.id +
+              "&formador=" + Uri.EscapeDataString(sessao.Formador) +
+              "&ref=" + sessao.RefAccao +
+              "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
+              "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "'>" +
+              "Link de acesso</a><br/><br/>" +
+              "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
+              "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
 
 
 
@@ -614,7 +609,7 @@ namespace SalasZoomNotificationFormadores
                                             if (!teste)
                                                 numValidate = ValidarNum(telefone);
                                             else
-                                                numValidate = ValidarNum("912648984");
+                                                numValidate = ValidarNum("937414695");
 
                                             if (numValidate != null)
                                             {
@@ -627,7 +622,25 @@ namespace SalasZoomNotificationFormadores
                                         {
                                             if (newSms.msisdn != null)
                                             {
-                                                string bodysms = sessao.RefAccao.ToString() + " // aula: " + DateTime.Now.ToShortDateString() + "\n\n" + (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") + (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "\n\nEstimamos que se encontre bem" + "\n\nServe o resente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " + sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental)" + "\n\nPara aceder à sala virtual, deverá entrar através do seguinte link: " + linkRegistrant + "\n\nPara solicitar apoio ou ajuda, deverá entrar através do seguinte link: https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(sessao.Formador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " \n\nPara qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " + emailtxtcoordenador + " e do seguinte contacto telefónico 22 549 21 90";
+                                                string bodysms = sessao.RefAccao.ToString() + " // aula: " + DateTime.Now.ToShortDateString() + "\n\n" +
+                                                (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") +
+                                                (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "\n\n" +
+                                                "Estimamos que se encontre bem.\n\n" +
+                                                "Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " +
+                                                sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental).\n\n" +
+                                                "Para aceder à sala virtual, deverá aceder ao link:\n" +
+                                                "http://criapva.com/?id=" + itemSala.id +
+                                                "&formador=" + Uri.EscapeDataString(sessao.Formador) +
+                                                "&ref=" + sessao.RefAccao +
+                                                "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
+                                                "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "\n\n" +
+                                                "Para aceder à sala virtual, deverá aceder a: <a href=\"http://criapva.com/?id=" + itemSala.id +
+                                                "&formador=" + Uri.EscapeDataString(sessao.Formador) +
+                                                "&ref=" + sessao.RefAccao +
+                                                "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
+                                                "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "\">Link de acesso </a><br/><br/>" +
+                                                "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
+                                                "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
 
                                                 logsSenders.Clear();
                                                 if (newSms.msisdn != null)
@@ -795,8 +808,20 @@ namespace SalasZoomNotificationFormadores
                                     }
                                     if (linkRegistrant != null && linkRegistrant != "")
                                     {
-                                        string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor ") + "<br/><br/>" + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "<br/><br/>Estimamos que se encontre bem.<br/>Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" + sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>Para aceder à sala virtual, deverá entrar através do seguinte link:<br/><br/><a href=" + linkRegistrant + ">Link de acesso à sala virtual</a>" + "<br/><br/><a href=" + "https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(nomeformador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " style =\"font-face:arial;font-weight:bold;color:#fff;background-color:#1882d9;font-size:18px;text-decoration:none;line-height:2em;display:inline-block;text-align:center;border-radius:10px;border-color:#1882d9;border-style:solid;border-width:10px 20px\"> Solicitar ajuda ou apoio</a> <br/><br/>Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail <a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico <strong>22 549 21 90.</strong><br/><br/><h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
-
+                                        string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor ") + "<br/><br/>" +
+                                                      (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "<br/><br/>" +
+                                                      "Estimamos que se encontre bem.<br/>" +
+                                                      "Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" +
+                                                      sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>" +
+                                                      "Para aceder à sala virtual, deverá aceder a:<br/><br/>" +
+                                                      "<a href='http://criapva.com/?id=" + itemSala.id +
+                                                      "&formador=" + Uri.EscapeDataString(sessao.Formador) +
+                                                      "&ref=" + sessao.RefAccao +
+                                                      "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
+                                                      "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "'>" +
+                                                      "Link de acesso </a><br/><br/>" +
+                                                      "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
+                                                      "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
                                         mm.Body = body;
                                         client.Send(mm);
                                         mm.Dispose();
@@ -813,7 +838,7 @@ namespace SalasZoomNotificationFormadores
                                             if (!teste)
                                                 numValidate = ValidarNum(telefone);
                                             else
-                                                numValidate = ValidarNum("912648984");
+                                                numValidate = ValidarNum("937414695");
                                             if (numValidate != null)
                                             {
                                                 newSms.msisdn = numValidate;
@@ -825,7 +850,20 @@ namespace SalasZoomNotificationFormadores
                                         {
                                             if (newSms.msisdn != null)
                                             {
-                                                string bodysms = sessao.RefAccao + " // aula: " + DateTime.Now.ToShortDateString() + "\n\n" + (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "\n\nEstimamos que se encontre bem" + "\n\nServe o resente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " + sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental)" + "\n\nPara aceder à sala virtual, deverá entrar através do seguinte link: " + linkRegistrant + "\n\nPara solicitar apoio ou ajuda, deverá entrar através do seguinte link:https://ead.institutocriap.com/Zoomisoft/help.php?id= " + itemSala.id + "&formador=" + Uri.EscapeDataString(nomeformador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " \n\nPara qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " + emailtxtcoordenador + " e do seguinte contacto telefónico 22 549 21 90";
+                                                string bodysms = sessao.RefAccao + " // Aula: " + DateTime.Now.ToShortDateString() + "\n\n" +
+                                                (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") +
+                                                (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "\n\n" +
+                                                "Estimamos que se encontre bem.\n\n" +
+                                                "Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " +
+                                                sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental).\n\n" +
+                                                "Para aceder à sala virtual, deverá aceder a:\n" +
+                                                "http://criapva.com/?id=" + itemSala.id +
+                                                "&formador=" + Uri.EscapeDataString(sessao.Formador) +
+                                                "&ref=" + sessao.RefAccao +
+                                                "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
+                                                "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "\">Link de acesso</a><br/><br/>" +
+                                                "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.\n\n" +
+                                                "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
 
                                                 logsSenders.Clear();
                                                 if (newSms.msisdn != null)
@@ -1074,7 +1112,21 @@ namespace SalasZoomNotificationFormadores
                                 }
                                 if (linkRegistrant != null && linkRegistrant != "")
                                 {
-                                    string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor ") + "<br/><br/>" + (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "<br/><br/>Estimamos que se encontre bem.<br/>Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" + sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>Para aceder à sala virtual, deverá entrar através do seguinte link:<br/><br/><a href=" + linkRegistrant + ">Link de acesso à sala virtual</a><br/><br/><a href=" + "https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(sessao.Formador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " style =\"font-face:arial;font-weight:bold;color:#fff;background-color:#1882d9;font-size:18px;text-decoration:none;line-height:2em;display:inline-block;text-align:center;border-radius:10px;border-color:#1882d9;border-style:solid;border-width:10px 20px\"> Solicitar ajuda ou apoio</a> <br/><br/>Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail <a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico <strong>22 549 21 90.</strong><br/><br/><h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
+
+                                    string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor ") + "<br/><br/>" +
+                                                   (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "<br/><br/>" +
+                                                   "Estimamos que se encontre bem.<br/>" +
+                                                   "Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" +
+                                                   sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>" +
+                                                   "Para aceder à sala virtual, deverá aceder a:<br/><br/>" +
+                                                   "<a href='http://criapva.com/?id=" + itemSala.id +
+                                                   "&formador=" + Uri.EscapeDataString(sessao.Formador) +
+                                                   "&ref=" + sessao.RefAccao +
+                                                   "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
+                                                   "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "'>" +
+                                                   "Link de acesso </a><br/><br/>" +
+                                                   "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
+                                                   "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
 
                                     mm.Body = body;
                                     client.Send(mm);
@@ -1091,7 +1143,7 @@ namespace SalasZoomNotificationFormadores
                                         if (!teste)
                                             numValidate = ValidarNum(telefone);
                                         else
-                                            numValidate = ValidarNum("912648984");
+                                            numValidate = ValidarNum("937414695");
                                         if (numValidate != null)
                                         {
                                             newSms.msisdn = numValidate;
@@ -1103,7 +1155,26 @@ namespace SalasZoomNotificationFormadores
                                     {
                                         if (newSms.msisdn != null)
                                         {
-                                            string bodysms = sessao.RefAccao + " // aula: " + DateTime.Now.ToShortDateString() + "\n\n" + (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") + (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "\n\nEstimamos que se encontre bem" + "\n\nServe o resente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " + sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental)" + "\n\nPara aceder à sala virtual, deverá entrar através do seguinte link: " + linkRegistrant + "\n\nPara solicitar apoio ou ajuda, deverá entrar através do seguinte link: https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(sessao.Formador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " \n\nPara qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " + emailtxtcoordenador + " e do seguinte contacto telefónico 22 549 21 90";
+                                            string bodysms = sessao.RefAccao.ToString() + " // aula: " + DateTime.Now.ToShortDateString() + "\n\n" +
+                                            (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") +
+                                            (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "\n\n" +
+                                            "Estimamos que se encontre bem.\n\n" +
+                                            "Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " +
+                                            sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental).\n\n" +
+                                            "Para aceder à sala virtual, deverá aceder a:\n" +
+                                            "http://criapva.com/?id=" + itemSala.id +
+                                            "&formador=" + Uri.EscapeDataString(sessao.Formador) +
+                                            "&ref=" + sessao.RefAccao +
+                                            "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
+                                            "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "\n\n" +
+                                            "Para aceder à sala virtual, deverá aceder ao: <a href=\"http://criapva.com/?id=" + itemSala.id +
+                                            "&formador=" + Uri.EscapeDataString(sessao.Formador) +
+                                            "&ref=" + sessao.RefAccao +
+                                            "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
+                                            "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "\">Link de acesso </a><br/><br/>" +
+                                            "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
+                                            "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
+
 
                                             logsSenders.Clear();
                                             if (newSms.msisdn != null)
@@ -1266,7 +1337,17 @@ namespace SalasZoomNotificationFormadores
                                 }
                                 if (linkRegistrant != null && linkRegistrant != "")
                                 {
-                                    string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor ") + "<br/><br/>" + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "<br/><br/>Estimamos que se encontre bem.<br/>Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" + sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>Para aceder à sala virtual, deverá entrar através do seguinte link:<br/><br/><a href=" + linkRegistrant + ">Link de acesso à sala virtual</a><br/><br/><a href=" + "https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(nomeformador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " style =\"font-face:arial;font-weight:bold;color:#fff;background-color:#1882d9;font-size:18px;text-decoration:none;line-height:2em;display:inline-block;text-align:center;border-radius:10px;border-color:#1882d9;border-style:solid;border-width:10px 20px\"> Solicitar ajuda ou apoio</a> <br/><br/>Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail <a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico <strong>22 549 21 90.</strong><br/><br/><h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
+                                    string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor") + "<br/><br/>" +
+                                                  (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "<br/><br/>" +
+                                                  "Estimamos que se encontre bem.<br/>Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" +
+                                                  sessao.Modulo + "</b> às <b>" + horamodulo + "</b> (horário de Portugal Continental).<br/>Para aceder à sala virtual, deverá aceder a :<br/><br/>" +
+                                                  "<a href='http://criapva.com/?id=" + itemSala.id +
+                                                  "&formador=" + Uri.EscapeDataString(nomeformador) +
+                                                  "&ref=" + sessao.RefAccao +
+                                                  "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
+                                                  "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "'>Link de acesso </a><br/><br/>" +
+                                                  "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
+                                                  "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
 
                                     mm.Body = body;
                                     client.Send(mm);
@@ -1284,7 +1365,7 @@ namespace SalasZoomNotificationFormadores
                                         if (!teste)
                                             numValidate = ValidarNum(telefone);
                                         else
-                                            numValidate = ValidarNum("912648984");
+                                            numValidate = ValidarNum("937414695");
                                         if (numValidate != null)
                                         {
                                             newSms.msisdn = numValidate;
@@ -1296,8 +1377,20 @@ namespace SalasZoomNotificationFormadores
                                     {
                                         if (newSms.msisdn != null)
                                         {
-                                            string bodysms = sessao.RefAccao + " // aula: " + DateTime.Now.ToShortDateString() + "\n\n" + (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "\n\nEstimamos que se encontre bem\n\nServe o resente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " + sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental)\n\nPara aceder à sala virtual, deverá entrar através do seguinte link: " + linkRegistrant + "\n\nPara solicitar apoio ou ajuda, deverá entrar através do seguinte link: https://ead.institutocriap.com/Zoomisoft/help.php?id=" + itemSala.id + "&formador=" + Uri.EscapeDataString(nomeformador) + "&ref=" + sessao.RefAccao + "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) + " \n\nPara qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " + emailtxtcoordenador + " e do seguinte contacto telefónico 22 549 21 90";
-
+                                            string bodysms = sessao.RefAccao + " // Aula: " + DateTime.Now.ToShortDateString() + "\n\n" +
+                                            (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") +
+                                            (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "\n\n" +
+                                            "Estimamos que se encontre bem.\n\n" +
+                                            "Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " +
+                                            sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental).\n\n" +
+                                            "Para aceder à sala virtual, deverá aceder a:\n" +
+                                            "http://criapva.com/?id=" + itemSala.id +
+                                            "&formador=" + Uri.EscapeDataString(sessao.Formador) +
+                                            "&ref=" + sessao.RefAccao +
+                                            "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
+                                            "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "\">Link de acesso</a><br/><br/>" + 
+                                            "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.\n\n" +
+                                            "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
                                             logsSenders.Clear();
                                             if (newSms.msisdn != null)
                                             {
@@ -1360,9 +1453,9 @@ namespace SalasZoomNotificationFormadores
         }
         private void Button1_Click(object sender, EventArgs e)
         {
-            string msg2 = Uri.EscapeDataString("Hello 2");
-            ProcessStartInfo p1 = new ProcessStartInfo("https://ead.institutocriap.com/Zoomisoft/enviarmsg.php?text=Olá&phone=170123456789", "");
-            Process.Start(p1);
+            //string msg2 = Uri.EscapeDataString("Hello 2");
+            //ProcessStartInfo p1 = new ProcessStartInfo("https://ead.institutocriap.com/Zoomisoft/enviarmsg.php?text=Olá&phone=170123456789", "");
+            //Process.Start(p1);
         }
     }
 }
