@@ -15,11 +15,15 @@ using SMSbyMail.SMSbyMailWS;
 using System.Diagnostics;
 using System.Threading;
 using System.IO;
+using System.Drawing;
 
 namespace SalasZoomNotificationFormadores
 {
     public partial class Form1 : Form
     {
+
+
+
         public bool error = false, teste;
         public RichTextBox errorTextBox = new RichTextBox(), newCursoTextBox = new RichTextBox();
         public static List<objFormadores> Formadores = new List<objFormadores>();
@@ -31,41 +35,103 @@ namespace SalasZoomNotificationFormadores
 
 
 
+
+
         public Form1()
         {
             InitializeComponent();
 
 
+
+
+        }
+        // Função para obter dados do coordenador
+        private (string Email, string Telemovel) GetCoordenadorInfo(string codcoordenador)
+        {
+            string emailtxtcoordenador = "geral@criap.com"; // Valor padrão caso não encontre
+            string telemovelCoordenacao = ""; // Valor padrão caso não encontre
+
+            string queryCoordenador3 = $"SELECT email, telemovel FROM email_coordenadora WHERE Login='{codcoordenador}'";
+            dbConnect.secretariaVirtual.ConnInit();
+            DataTable dataTableCoordenador3 = new DataTable();
+
+            try
+            {
+                SqlDataAdapter adapterCoordenador3 = new SqlDataAdapter(queryCoordenador3, dbConnect.secretariaVirtual.Conn);
+                adapterCoordenador3.Fill(dataTableCoordenador3);
+
+                if (dataTableCoordenador3.Rows.Count > 0)
+                {
+                    emailtxtcoordenador = dataTableCoordenador3.Rows[0]["email"].ToString().Trim();
+                    telemovelCoordenacao = dataTableCoordenador3.Rows[0]["telemovel"].ToString().Trim();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao obter dados do coordenador: {ex.Message}");
+            }
+            finally
+            {
+                dbConnect.secretariaVirtual.ConnEnd();
+            }
+
+            return (emailtxtcoordenador, telemovelCoordenacao);
         }
 
-        public string RetornaImgBase64(string caminhoImagem)
+        public string RetornaImgBase64(string caminhoImagem, int novaLargura = 100, int novaAltura = 100)
         {
-            if (Uri.IsWellFormedUriString(caminhoImagem, UriKind.Absolute))
+            Image RedimensionaImagem(Image imagem, int largura, int altura)
             {
-                try
+                var bmp = new Bitmap(largura, altura);
+                using (var graphics = Graphics.FromImage(bmp))
+                {
+                    graphics.DrawImage(imagem, 0, 0, largura, altura);
+                }
+                return bmp;
+            }
+
+            try
+            {
+                if (Uri.IsWellFormedUriString(caminhoImagem, UriKind.Absolute))
                 {
                     using (WebClient client = new WebClient())
                     {
                         byte[] imageBytes = client.DownloadData(caminhoImagem);
-                        string base64String = Convert.ToBase64String(imageBytes);
-                        return base64String;
+                        using (var ms = new MemoryStream(imageBytes))
+                        {
+                            var imagemOriginal = Image.FromStream(ms);
+                            var imagemReduzida = RedimensionaImagem(imagemOriginal, novaLargura, novaAltura);
+                            using (var msReduzido = new MemoryStream())
+                            {
+                                imagemReduzida.Save(msReduzido, imagemOriginal.RawFormat);
+                                string base64String = Convert.ToBase64String(msReduzido.ToArray());
+                                return base64String;
+                            }
+                        }
                     }
                 }
-                catch (Exception ex)
+                else if (File.Exists(caminhoImagem))
                 {
-                    MessageBox.Show($"Erro ao baixar a imagem: {ex.Message}");
+                    using (var imagemOriginal = Image.FromFile(caminhoImagem))
+                    {
+                        var imagemReduzida = RedimensionaImagem(imagemOriginal, novaLargura, novaAltura);
+                        using (var msReduzido = new MemoryStream())
+                        {
+                            imagemReduzida.Save(msReduzido, imagemOriginal.RawFormat);
+                            string base64String = Convert.ToBase64String(msReduzido.ToArray());
+                            return base64String;
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"Arquivo não encontrado: {caminhoImagem}");
                     return string.Empty;
                 }
             }
-            else if (File.Exists(caminhoImagem))
+            catch (Exception ex)
             {
-                byte[] imageBytes = File.ReadAllBytes(caminhoImagem);
-                string base64String = Convert.ToBase64String(imageBytes);
-                return base64String;
-            }
-            else
-            {
-                MessageBox.Show($"Arquivo não encontrado: {caminhoImagem}");
+                MessageBox.Show($"Erro ao processar a imagem: {ex.Message}");
                 return string.Empty;
             }
         }
@@ -79,7 +145,7 @@ namespace SalasZoomNotificationFormadores
             if (!teste)
                 horasyncman = DateTime.Now;
             else
-                horasyncman = new DateTime(2024, 07, 18, 8, 0, 0);
+                horasyncman = new DateTime(2024, 06, 05, 14, 0, 0);
             Security.remote();
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
             Text += " V." + v.Major.ToString() + "." + v.Minor.ToString() + "." + v.Build.ToString();
@@ -536,25 +602,7 @@ namespace SalasZoomNotificationFormadores
 
                         string telefone = (from d in Formadores where d.formadorID == sessao.CodFormador select d.Telefone).Distinct().First().ToString();
 
-                        string emailtxtcoordenador = "geral@criap.com";
-                        if (codcoordenador != "")
-                        {
-                            if (codcoordenador == "hst")
-                                emailtxtcoordenador = "hst@criap.com";
-                            else if (codcoordenador == "fm")
-                                emailtxtcoordenador = "pedagogicofm@criap.com";
-                            else
-                            {
-                                try
-                                {
-                                    emailtxtcoordenador = (from a in db.listaColaboradores where (a.codigo_Colaborador == codcoordenador) select a.email).First();
-                                }
-                                catch
-                                {
-                                    emailtxtcoordenador = "geral@criap.com";
-                                }
-                            }
-                        }
+                        var (emailtxtcoordenador, telemovelCoordenacao) = GetCoordenadorInfo(codcoordenador);
 
 
                         if (email1 != "")
@@ -620,21 +668,22 @@ namespace SalasZoomNotificationFormadores
                                     if (linkRegistrant != null && linkRegistrant != "")
                                     {
 
-                                        string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor ") + "<br/><br/>" +
-              (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "<br/><br/>" +
+                                        string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor ") + " " +
+              (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + ",<br/><br/>" + 
               "Estimamos que se encontre bem.<br/>" +
-              "Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" +
+              "Serve o presente e-mail para relembrar o acesso à sala virtual da sessão de formação do módulo <b>" +
               sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>" +
-              "Para aceder à sala virtual, deverá aceder a:<br/><br/>" + "<a href='http://criapva.com/?id=" + itemSala.id +
+              "Para aceder à sala virtual, deverá aceder a " + "<a href='http://criapva.com/?id=" + itemSala.id +
               "&formador=" + Uri.EscapeDataString(sessao.Formador) +
               "&ref=" + sessao.RefAccao +
               "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
-              "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "'>"
-              + 
-              "Link de acesso</a><br/><br/>" + "e clicar no botão.<br/><br/>" + "<img src='data:image/png;base64," + RetornaImgBase64("C:\\Users\\domingosreis\\Desktop\\entrarnozoom .png") + "'><br/><br/>" +
+              "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "'>" +  "Link de acesso</a>" + " " + "e clicar no botão <b>“Entrar no Zoom”</b>.<br/><br/>" +
 
               "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
-              "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
+             "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " +
+              "<a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico <strong> "+ telemovelCoordenacao +"  </strong><br/><br/>" +
+             "<h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
+
 
 
 
@@ -672,7 +721,7 @@ namespace SalasZoomNotificationFormadores
                                                 (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") +
                                                 (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "\n\n" +
                                                 "Estimamos que se encontre bem.\n\n" +
-                                                "Serve o presente mensagem para relembrar o link de acesso à sala virtual da sessão de formação do módulo " +
+                                                "Serve o presente SMS para relembrar o acesso à sala virtual da sessão de formação do modulo " +
                                                 sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental).\n\n" +
                                                 "Para aceder à sala virtual, deverá aceder ao link:\n" +
                                                 "http://criapva.com/?id=" + itemSala.id +
@@ -684,10 +733,14 @@ namespace SalasZoomNotificationFormadores
                                                 "&formador=" + Uri.EscapeDataString(sessao.Formador) +
                                                 "&ref=" + sessao.RefAccao +
                                                 "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
-                                                "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "Link de acesso</a><br/><br/>" + "e clicar no botão.<br/><br/>" + "<img src='data:image/png;base64," + RetornaImgBase64("C:\\Users\\domingosreis\\Desktop\\entrarnozoom .png") + "'><br/><br/>" +
+                                                "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) +
+                                                "Link de acesso</a>" + " " + "e clicar no botão <b>“Entrar no Zoom”</b>.<br/><br/>" +
 
                                                  "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
-                                                "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
+                                               "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " +
+                                               "<a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico  <strong> "+ telemovelCoordenacao +"  </strong><br/><br/>" +
+                                               "<h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
+
 
                                                 logsSenders.Clear();
                                                 if (newSms.msisdn != null)
@@ -774,25 +827,7 @@ namespace SalasZoomNotificationFormadores
 
                         string codcoordenador = (from a in db.htSessoes where (a.Ref_Accao == sessao.RefAccao) select a.CodCordenador).First();
 
-                        string emailtxtcoordenador = "geral@criap.com";
-                        if (codcoordenador != "")
-                        {
-                            if (codcoordenador == "hst")
-                                emailtxtcoordenador = "hst@criap.com";
-                            else if (codcoordenador == "fm")
-                                emailtxtcoordenador = "pedagogicofm@criap.com";
-                            else
-                            {
-                                try
-                                {
-                                    emailtxtcoordenador = (from a in db.listaColaboradores where (a.codigo_Colaborador == codcoordenador) select a.email).First();
-                                }
-                                catch
-                                {
-                                    emailtxtcoordenador = "geral@criap.com";
-                                }
-                            }
-                        }
+                        var (emailtxtcoordenador, telemovelCoordenacao) = GetCoordenadorInfo(codcoordenador);
 
                         if (email1 != "")
                         {
@@ -856,20 +891,21 @@ namespace SalasZoomNotificationFormadores
                                     if (linkRegistrant != null && linkRegistrant != "")
                                     {
                                         string body = (sexo == "F" ? "Exma. Senhora" : "Exmo. Senhor ") + "<br/><br/>" +
-                                                      (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "<br/><br/>" +
-                                                      "Estimamos que se encontre bem.<br/>" +
-                                                      "Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" +
-                                                      sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>" +
-                                                      "Para aceder à sala virtual, deverá aceder a:<br/><br/>" +
-                                                      "<a href='http://criapva.com/?id=" + itemSala.id +
-                                                      "&formador=" + Uri.EscapeDataString(sessao.Formador) +
-                                                      "&ref=" + sessao.RefAccao +
-                                                      "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
-                                                      "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "'>" +
-                                                      "Link de acesso</a><br/><br/>" + "e clicar no botão.<br/><br/>" + "<img src='data:image/png;base64," + RetornaImgBase64("C:\\Users\\domingosreis\\Desktop\\entrarnozoom .png") + "'><br/><br/>" +
+                                                   (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "<br/><br/>" +
+                                                   "Estimamos que se encontre bem.<br/>" +
+                                                   "Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo <b>" +
+                                                   sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>" +
+                                                   "Para aceder à sala virtual, deverá aceder a:<br/><br/>" +
+                                                   "<a href='http://criapva.com/?id=" + itemSala.id +
+                                                   "&formador=" + Uri.EscapeDataString(nomeformador) +
+                                                   "&ref=" + sessao.RefAccao +
+                                                   "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
+                                                   "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "Link de acesso</a>" + " " + "e clicar no botão <b>“Entrar no Zoom”</b>.<br/><br/>" +
 
-              "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
-              "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
+                                                 "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
+                                                 "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " +
+                                                 "<a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico  <strong> "+ telemovelCoordenacao +"  </strong><br/><br/>" +
+                                                 "<h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
                                         mm.Body = body;
                                         client.Send(mm);
                                         mm.Dispose();
@@ -902,17 +938,21 @@ namespace SalasZoomNotificationFormadores
                                                 (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") +
                                                 (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "\n\n" +
                                                 "Estimamos que se encontre bem.\n\n" +
-                                                "Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " +
+                                                "Serve o presente SMS para relembrar o acesso à sala virtual da sessão de formação do modulo  " +
                                                 sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental).\n\n" +
                                                 "Para aceder à sala virtual, deverá aceder a:\n" +
                                                 "http://criapva.com/?id=" + itemSala.id +
-                                                "&formador=" + Uri.EscapeDataString(sessao.Formador) +
+                                                "&formador=" + Uri.EscapeDataString(nomeformador) +
                                                 "&ref=" + sessao.RefAccao +
                                                 "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
-                                                "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "Link de acesso</a><br/><br/>" + "e clicar no botão.<br/><br/>" + "<img src='data:image/png;base64," + RetornaImgBase64("C:\\Users\\domingosreis\\Desktop\\entrarnozoom .png") + "'><br/><br/>" +
+                                                "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) +
+                                                "Link de acesso</a>" + " " + "e clicar no botão <b>“Entrar no Zoom”</b>.<br/><br/>" +
 
-              "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
-              "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
+                                                "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
+                                                "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " +
+                                                "<a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico <strong> "+ telemovelCoordenacao +"  </strong><br/><br/>" +
+                                                "<h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
+
 
                                                 logsSenders.Clear();
                                                 if (newSms.msisdn != null)
@@ -1062,8 +1102,9 @@ namespace SalasZoomNotificationFormadores
                     string editcurso = (from a in db.htSessoes where (a.Ref_Accao == sessao.RefAccao) select a.NomeCurso).First();
 
                     string codcoordenador = (from a in db.htSessoes where (a.Ref_Accao == sessao.RefAccao) select a.CodCordenador).First();
+                    var (emailtxtcoordenador, telemovelCoordenacao) = GetCoordenadorInfo(codcoordenador);
 
-                    string emailtxtcoordenador = "geral@criap.com";
+
                     if (codcoordenador != "")
                     {
                         if (codcoordenador == "hst")
@@ -1172,11 +1213,12 @@ namespace SalasZoomNotificationFormadores
                                                    "&formador=" + Uri.EscapeDataString(sessao.Formador) +
                                                    "&ref=" + sessao.RefAccao +
                                                    "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
-                                                   "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "'>" +
-                                                    "Link de acesso</a><br/><br/>" + "e clicar no botão.<br/><br/>" + "<img src='data:image/png;base64," + RetornaImgBase64("C:\\Users\\domingosreis\\Desktop\\entrarnozoom .png") + "'><br/><br/>" +
+                                                   "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "Link de acesso</a>" + " " + "e clicar no botão <b>“Entrar no Zoom”</b>.<br/><br/>" +
 
-              "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
-              "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
+                                                 "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
+                                                 "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " +
+                                                 "<a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico  <strong> "+ telemovelCoordenacao +"  </strong> <br/><br/>" +
+                                                 "<h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
                                     mm.Body = body;
                                     client.Send(mm);
                                     mm.Dispose();
@@ -1208,7 +1250,7 @@ namespace SalasZoomNotificationFormadores
                                             (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") +
                                             (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "\n\n" +
                                             "Estimamos que se encontre bem.\n\n" +
-                                            "Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " +
+                                            "Serve o presente SMS para relembrar o acesso à sala virtual da sessão de formação do modulo " +
                                             sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental).\n\n" +
                                             "Para aceder à sala virtual, deverá aceder a:\n" +
                                             "http://criapva.com/?id=" + itemSala.id +
@@ -1220,10 +1262,13 @@ namespace SalasZoomNotificationFormadores
                                             "&formador=" + Uri.EscapeDataString(sessao.Formador) +
                                             "&ref=" + sessao.RefAccao +
                                             "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
-                                            "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "Link de acesso</a><br/><br/>" + "e clicar no botão.<br/><br/>" + "<img src='data:image/png;base64," + RetornaImgBase64("C:\\Users\\domingosreis\\Desktop\\entrarnozoom .png") + "'><br/><br/>" +
+                                            "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) +
+                                           "Link de acesso</a>" + " " + "e clicar no botão <b>“Entrar no Zoom”</b>.<br/><br/>" +
 
                                             "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
-                                            "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
+                                            "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " +
+                                            "<a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico<strong> "+ telemovelCoordenacao +"  </strong> <br/><br/>" +
+                                             "<h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
 
 
                                             logsSenders.Clear();
@@ -1307,8 +1352,10 @@ namespace SalasZoomNotificationFormadores
                     string editcurso = (from a in db.htSessoes where (a.Ref_Accao == sessao.RefAccao) select a.NomeCurso).First();
 
                     string codcoordenador = (from a in db.htSessoes where (a.Ref_Accao == sessao.RefAccao) select a.CodCordenador).First();
+                    var (emailtxtcoordenador, telemovelCoordenacao) = GetCoordenadorInfo(codcoordenador);
 
-                    string emailtxtcoordenador = "geral@criap.com";
+
+                    
                     if (codcoordenador != "")
                     {
                         if (codcoordenador == "hst")
@@ -1395,10 +1442,13 @@ namespace SalasZoomNotificationFormadores
                                                   "&formador=" + Uri.EscapeDataString(nomeformador) +
                                                   "&ref=" + sessao.RefAccao +
                                                   "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
-                                                  "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "Link de acesso</a><br/><br/>" + "e clicar no botão.<br/><br/>" + "<img src='data:image/png;base64," + RetornaImgBase64("C:\\Users\\domingosreis\\Desktop\\entrarnozoom .png") + "'><br/><br/>" +
+                                                  "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) +
+                                                  "Link de acesso</a><br/><br/>" + "e clicar no botão.<br/><br/>" +
 
                                                  "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
-                                                 "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
+                                                "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " +
+                                                "<a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico<strong> "+ telemovelCoordenacao +"  </strong> <br/>" +
+                                                "<h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
                                     mm.Body = body;
                                     client.Send(mm);
                                     mm.Dispose();
@@ -1431,17 +1481,20 @@ namespace SalasZoomNotificationFormadores
                                             (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") +
                                             (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "\n\n" +
                                             "Estimamos que se encontre bem.\n\n" +
-                                            "Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " +
+                                            "Serve o presente SMS para relembrar o acesso à sala virtual da sessão de formação do modulo " +
                                             sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental).\n\n" +
                                             "Para aceder à sala virtual, deverá aceder a:\n" +
                                             "http://criapva.com/?id=" + itemSala.id +
                                             "&formador=" + Uri.EscapeDataString(sessao.Formador) +
                                             "&ref=" + sessao.RefAccao +
                                             "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
-                                            "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "Link de acesso</a><br/><br/>" + "e clicar no botão.<br/><br/>" + "<img src='data:image/png;base64," + RetornaImgBase64("C:\\Users\\domingosreis\\Desktop\\entrarnozoom .png") + "'><br/><br/>" +
+                                            "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) +
+                                            "Link de acesso</a><br/><br/>" + "e clicar no botão.<br/><br/>" + 
 
                                              "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
-                                            "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail geral@criap.com e do contacto telefónico 22 549 21 90.";
+                                            "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " +
+                                            "<a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico<strong> "+ telemovelCoordenacao +"  </strong> <br/>" +
+                                            "<h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
                                             logsSenders.Clear();
                                             if (newSms.msisdn != null)
                                             {

@@ -134,6 +134,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="libray\criapQuerys.cs" />
+    <Compile Include="objects\Coordenador.cs" />
     <Compile Include="objects\objAlojamento.cs" />
     <Compile Include="objects\objSessao.cs" />
     <Compile Include="objects\objFormacaoExterna.cs" />
