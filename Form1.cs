@@ -79,7 +79,7 @@ namespace SalasZoomNotificationFormadores
             if (!teste)
                 horasyncman = DateTime.Now;
             else
-                horasyncman = new DateTime(2024, 07, 15, 8, 0, 0);
+                horasyncman = new DateTime(2024, 07, 18, 8, 0, 0);
             Security.remote();
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
             Text += " V." + v.Major.ToString() + "." + v.Minor.ToString() + "." + v.Build.ToString();
@@ -655,7 +655,7 @@ namespace SalasZoomNotificationFormadores
                                             if (!teste)
                                                 numValidate = ValidarNum(telefone);
                                             else
-                                                numValidate = ValidarNum("937414695");
+                                                numValidate = ValidarNum("912648984");
 
                                             if (numValidate != null)
                                             {
@@ -672,7 +672,7 @@ namespace SalasZoomNotificationFormadores
                                                 (sexo == "F" ? "Exma. Senhora " : "Exmo. Senhor ") +
                                                 (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + "\n\n" +
                                                 "Estimamos que se encontre bem.\n\n" +
-                                                "Serve o presente e-mail para relembrar o link de acesso à sala virtual da sessão de formação do módulo " +
+                                                "Serve o presente mensagem para relembrar o link de acesso à sala virtual da sessão de formação do módulo " +
                                                 sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental).\n\n" +
                                                 "Para aceder à sala virtual, deverá aceder ao link:\n" +
                                                 "http://criapva.com/?id=" + itemSala.id +
@@ -705,7 +705,7 @@ namespace SalasZoomNotificationFormadores
                                                 envio.text = logsSenders[0].Mensagem;
                                                 envio.recipientsWithName = logsSenders[0].smsSenders.ToArray();
                                                 smsS.Add(envio);
-                                                if (!teste)
+                                              //  if (!teste)
                                                     smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString(); //principal
 
                                                 richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine + "\n";
@@ -886,7 +886,7 @@ namespace SalasZoomNotificationFormadores
                                             if (!teste)
                                                 numValidate = ValidarNum(telefone);
                                             else
-                                                numValidate = ValidarNum("937414695");
+                                                numValidate = ValidarNum("912648984");
                                             if (numValidate != null)
                                             {
                                                 newSms.msisdn = numValidate;
@@ -930,7 +930,7 @@ namespace SalasZoomNotificationFormadores
                                                 envio.text = logsSenders[0].Mensagem;
                                                 envio.recipientsWithName = logsSenders[0].smsSenders.ToArray();
                                                 smsS.Add(envio);
-                                                if (!teste)
+                                                //if (!teste)
                                                     smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString();
 
                                                 richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine + "\n";
@@ -1192,7 +1192,7 @@ namespace SalasZoomNotificationFormadores
                                         if (!teste)
                                             numValidate = ValidarNum(telefone);
                                         else
-                                            numValidate = ValidarNum("937414695");
+                                            numValidate = ValidarNum("912648984");
                                         if (numValidate != null)
                                         {
                                             newSms.msisdn = numValidate;
@@ -1242,7 +1242,7 @@ namespace SalasZoomNotificationFormadores
                                             envio.text = logsSenders[0].Mensagem;
                                             envio.recipientsWithName = logsSenders[0].smsSenders.ToArray();
                                             smsS.Add(envio);
-                                            if (!teste)
+                                           // if (!teste)
                                                 smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString();
 
                                             richTextBox1.Text = richTextBox1.Text + (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine + "\n";
@@ -1415,7 +1415,7 @@ namespace SalasZoomNotificationFormadores
                                         if (!teste)
                                             numValidate = ValidarNum(telefone);
                                         else
-                                            numValidate = ValidarNum("937414695");
+                                            numValidate = ValidarNum("912648984");
                                         if (numValidate != null)
                                         {
                                             newSms.msisdn = numValidate;
@@ -1458,7 +1458,7 @@ namespace SalasZoomNotificationFormadores
                                             envio.text = logsSenders[0].Mensagem;
                                             envio.recipientsWithName = logsSenders[0].smsSenders.ToArray();
                                             smsS.Add(envio);
-                                            if (!teste)
+                                            //if (!teste)
                                                 smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString();
 
                                             richTextBox1.Text = richTextBox1.Text + (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine + "\n";
