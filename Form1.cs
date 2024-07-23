@@ -145,7 +145,7 @@ namespace SalasZoomNotificationFormadores
             if (!teste)
                 horasyncman = DateTime.Now;
             else
-                horasyncman = new DateTime(2024, 06, 05, 14, 0, 0);
+                horasyncman = new DateTime(2024, 06, 06, 14, 0, 0);
             Security.remote();
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
             Text += " V." + v.Major.ToString() + "." + v.Minor.ToString() + "." + v.Build.ToString();
@@ -1443,7 +1443,7 @@ namespace SalasZoomNotificationFormadores
                                                   "&ref=" + sessao.RefAccao +
                                                   "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
                                                   "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) +
-                                                  "Link de acesso</a><br/><br/>" + "e clicar no botão.<br/><br/>" +
+                                                   "Link de acesso</a>" + " " + "e clicar no botão <b>“Entrar no Zoom”</b>.<br/><br/>" +
 
                                                  "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
                                                 "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " +
@@ -1489,7 +1489,7 @@ namespace SalasZoomNotificationFormadores
                                             "&ref=" + sessao.RefAccao +
                                             "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
                                             "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) +
-                                            "Link de acesso</a><br/><br/>" + "e clicar no botão.<br/><br/>" + 
+                                             "Link de acesso</a>" + " " + "e clicar no botão <b>“Entrar no Zoom”</b>.<br/><br/>" +
 
                                              "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
                                             "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " +
