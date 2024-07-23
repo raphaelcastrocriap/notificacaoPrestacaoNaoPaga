@@ -49,7 +49,7 @@ namespace SalasZoomNotificationFormadores
         private (string Email, string Telemovel) GetCoordenadorInfo(string codcoordenador)
         {
             string emailtxtcoordenador = "geral@criap.com"; // Valor padrão caso não encontre
-            string telemovelCoordenacao = ""; // Valor padrão caso não encontre
+            string telemovelCoordenacao = "22 549 21 90"; // Valor padrão caso não encontre
 
             string queryCoordenador3 = $"SELECT email, telemovel FROM email_coordenadora WHERE Login='{codcoordenador}'";
             dbConnect.secretariaVirtual.ConnInit();
@@ -145,7 +145,7 @@ namespace SalasZoomNotificationFormadores
             if (!teste)
                 horasyncman = DateTime.Now;
             else
-                horasyncman = new DateTime(2024, 06, 06, 14, 0, 0);
+                horasyncman = new DateTime(2024, 06, 05, 14, 0, 0);
             Security.remote();
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
             Text += " V." + v.Major.ToString() + "." + v.Minor.ToString() + "." + v.Build.ToString();
@@ -740,7 +740,7 @@ namespace SalasZoomNotificationFormadores
                                                "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso responsável pela ação, através deste endereço de e-mail " +
                                                "<a href='mailto:" + emailtxtcoordenador + "'>" + emailtxtcoordenador + "</a> e do seguinte contacto telefónico  <strong> "+ telemovelCoordenacao +"  </strong><br/><br/>" +
                                                "<h6>Data de envio: " + DateTime.Now.ToShortDateString() + " Hora: " + DateTime.Now.ToString("HH:mm") + "</h6>";
-
+                                                
 
                                                 logsSenders.Clear();
                                                 if (newSms.msisdn != null)
@@ -759,7 +759,7 @@ namespace SalasZoomNotificationFormadores
                                                 envio.recipientsWithName = logsSenders[0].smsSenders.ToArray();
                                                 smsS.Add(envio);
                                               //  if (!teste)
-                                                    smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString(); //principal
+                                                    var res=smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString(); //principal
 
                                                 richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine + "\n";
                                             }
