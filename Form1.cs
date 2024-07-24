@@ -148,10 +148,11 @@ namespace SalasZoomNotificationFormadores
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
             Text += " V." + v.Major.ToString() + "." + v.Minor.ToString() + "." + v.Build.ToString();
 
-            string dt = @" <br><br><font size=""-2"">Controlo de versão: " + " V." + v.Major.ToString() + "." + v.Minor.ToString() + "." + v.Build.ToString() + " Assembly built date: " + System.IO.File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location) + " by sa";
+            string dt = @"Controlo de versão: " + " V." + v.Major.ToString() + "." + v.Minor.ToString() + "." + v.Build.ToString() + " Assembly built date: " + System.IO.File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location) + " by sa";
             mensagemInfo += " \r\n" + dt;
             string[] passedInArgs = Environment.GetCommandLineArgs();
 
+            if (passedInArgs.Contains("-a") || passedInArgs.Contains("-A"))
             if (passedInArgs.Contains("-a") || passedInArgs.Contains("-A"))
             {
                 Cursor.Current = Cursors.WaitCursor;
@@ -499,7 +500,7 @@ namespace SalasZoomNotificationFormadores
             else
                 mm.To.Add("sandraaguilar@criap.com");
             mm.Subject = assunto + " // " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToShortTimeString();
-            mm.IsBodyHtml = true;
+            mm.IsBodyHtml = false;
             mm.BodyEncoding = UTF8Encoding.UTF8;
             mm.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
             mm.Body = body + mensagemInfo;
@@ -513,7 +514,7 @@ namespace SalasZoomNotificationFormadores
         }
         private void Envia_emails_formadores()
         {
-            richTextBox1.Text = richTextBox1.Text + Environment.NewLine + "FORMADORES:" + Environment.NewLine;
+            richTextBox1.Text = richTextBox1.Text + "\nFORMADORES:\n\n";
             string subQuery = criapQuerys.Query.formadoresNotification.getModulosFormadoresALL();
             Formadores.Clear();
             dbConnect.ht.ConnInit();
@@ -686,7 +687,7 @@ namespace SalasZoomNotificationFormadores
                                         client.Send(mm);
                                         mm.Dispose();
 
-                                        richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
+                                        richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + "\n";
 
                                         //Envia sms
                                         recipientWithName newSms = new recipientWithName();
@@ -749,12 +750,12 @@ namespace SalasZoomNotificationFormadores
                                                 //  if (!teste)
                                                 var res = smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString(); //principal
 
-                                                richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine + "\n";
+                                                richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + telefone + (res.ToUpper().Contains("OK") ? " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo : "| sms NÃO ENVIADO") + "\n\n";
                                             }
                                         }
                                     }
                                     else
-                                        richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | NÃO FOI NOTIFICADO, NÃO TEM REGISTO NA MEETING , ALTERAÇÃO DE FORMADOR " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
+                                        richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | NÃO FOI NOTIFICADO, NÃO TEM REGISTO NA MEETING , ALTERAÇÃO DE FORMADOR " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + "\n\n";
 
                                 }
                             }
@@ -898,7 +899,7 @@ namespace SalasZoomNotificationFormadores
                                         client.Send(mm);
                                         mm.Dispose();
 
-                                        richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
+                                        richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + "\n";
 
                                         //Envia sms
                                         recipientWithName newSms = new recipientWithName();
@@ -959,12 +960,12 @@ namespace SalasZoomNotificationFormadores
                                                 //if (!teste)
                                                 var res = smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString();
 
-                                                richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine + "\n";
+                                                richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + telefone + (res.ToUpper().Contains("OK") ? " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo : "| sms NÃO ENVIADO") + "\n\n";
                                             }
                                         }
                                     }
                                     else
-                                        richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | NÃO FOI NOTIFICADO, NÃO TEM REGISTO NA MEETING , ALTERAÇÃO DE FORMADOR " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
+                                        richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | NÃO FOI NOTIFICADO, NÃO TEM REGISTO NA MEETING , ALTERAÇÃO DE FORMADOR " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + "\n\n";
 
                                 }
                             }
@@ -1013,7 +1014,7 @@ namespace SalasZoomNotificationFormadores
         }
         private void Envia_emails_formadores_sabado()
         {
-            richTextBox1.Text = richTextBox1.Text + Environment.NewLine + "FORMADORES:" + Environment.NewLine;
+            richTextBox1.Text = richTextBox1.Text + "\nFORMADORES:" + "\n\n";
             string subQuery = criapQuerys.Query.formadoresNotification.getModulosFormadoresALL();
             Formadores.Clear();
             dbConnect.ht.ConnInit();
@@ -1198,7 +1199,7 @@ namespace SalasZoomNotificationFormadores
                                     client.Send(mm);
                                     mm.Dispose();
 
-                                    richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
+                                    richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + "\n";
 
                                     //Envia sms
                                     recipientWithName newSms = new recipientWithName();
@@ -1261,12 +1262,12 @@ namespace SalasZoomNotificationFormadores
                                             //  if (!teste)
                                             var res = smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString(); //principal
 
-                                            richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine + "\n";
+                                            richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + telefone + (res.ToUpper().Contains("OK") ? " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo : "| sms NÃO ENVIADO") + "\n\n";
                                         }
                                     }
                                 }
                                 else
-                                    richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | NÃO FOI NOTIFICADO, NÃO TEM REGISTO NA MEETING , ALTERAÇÃO DE FORMADOR " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
+                                    richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | NÃO FOI NOTIFICADO, NÃO TEM REGISTO NA MEETING , ALTERAÇÃO DE FORMADOR " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + "\n\n";
 
 
                             }
@@ -1406,7 +1407,7 @@ namespace SalasZoomNotificationFormadores
                                     client.Send(mm);
                                     mm.Dispose();
 
-                                    richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
+                                    richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + "\n";
 
                                     //Envia sms
                                     recipientWithName newSms = new recipientWithName();
@@ -1466,13 +1467,13 @@ namespace SalasZoomNotificationFormadores
                                             smsS.Add(envio);
                                             //if (!teste)
                                             var res = smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString();
-
-                                            richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + telefone + " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine + "\n";
+                                            
+                                            richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + nomeformador + " | " + telefone + (res.ToUpper().Contains("OK")?" | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo: "| sms NÃO ENVIADO") + "\n\n";
                                         }
                                     }
                                 }
                                 else
-                                    richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | NÃO FOI NOTIFICADO, NÃO TEM REGISTO NA MEETING , ALTERAÇÃO DE FORMADOR " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + Environment.NewLine;
+                                    richTextBox1.Text += (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + " | " + email1 + " | NÃO FOI NOTIFICADO, NÃO TEM REGISTO NA MEETING , ALTERAÇÃO DE FORMADOR " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + " | " + sessao.RefAccao + " | " + horamodulo + "\n\n";
 
 
                             }
