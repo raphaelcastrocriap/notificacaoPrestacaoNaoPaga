@@ -17,6 +17,7 @@ using System.Threading;
 using System.IO;
 using System.Drawing;
 using MySqlX.XDevAPI;
+using System.Security.Cryptography;
 
 namespace SalasZoomNotificationFormadores
 {
@@ -143,7 +144,7 @@ namespace SalasZoomNotificationFormadores
             if (!teste)
                 horasyncman = DateTime.Now;
             else
-                horasyncman = new DateTime(2024, 07, 24, 14, 0, 0);
+                horasyncman = new DateTime(2024, 09, 27, 8, 0, 0);
             Security.remote();
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
             Text += " V." + v.Major.ToString() + "." + v.Minor.ToString() + "." + v.Build.ToString();
@@ -671,7 +672,7 @@ namespace SalasZoomNotificationFormadores
                                           (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + ",<br/><br/>" +
                                           "Estimamos que se encontre bem.<br/>" +
                                           "Serve o presente e-mail para relembrar o acesso à sala virtual da sessão de formação do módulo <b>" +
-                                          sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>" +
+                                          sessao.Modulo + " </b> das <b>" + horamodulo + " </b> " + (sessao.RefAccao.Contains("CFPIF_V4_ACO") ? "(horário dos Açores)" : "(horário de Portugal Continental)") + ".<br/>" +
                                           "Para aceder à sala virtual, deverá aceder ao " + "<a href='http://criapva.com/?id=" + itemSala.id +
                                           "&formador=" + Uri.EscapeDataString(sessao.Formador) +
                                           "&ref=" + sessao.RefAccao +
@@ -717,7 +718,7 @@ namespace SalasZoomNotificationFormadores
                                                 (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + ",\n" +
                                                 "Estimamos que se encontre bem.\n\n" +
                                                 "Serve a presente SMS para relembrar o acesso à sala virtual da sessão de formação do modulo " +
-                                                sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental).\n\n" +
+                                                sessao.Modulo + " das " + horamodulo + (sessao.RefAccao.Contains("CFPIF_V4_ACO") ? " (horário dos Açores)" : " (horário de Portugal Continental)") + ".\n\n" +
                                                 "Para aceder à sala virtual, deverá aceder ao link e clicar no botão “Entrar no Zoom”:\n" +
                                                 "http://criapva.com/?id=" + itemSala.id +
                                                 "&formador=" + Uri.EscapeDataString(sessao.Formador) +
@@ -883,7 +884,7 @@ namespace SalasZoomNotificationFormadores
                                            (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "<br/><br/>" +
                                            "Estimamos que se encontre bem.<br/>" +
                                            "Serve o presente e-mail para relembrar o acesso à sala virtual da sessão de formação do módulo <b>" +
-                                           sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>" +
+                                           sessao.Modulo + " </b> das <b>" + horamodulo + " </b> " + (sessao.RefAccao.Contains("CFPIF_V4_ACO") ? "(horário dos Açores)" : "(horário de Portugal Continental)") + ".<br/>" +
                                            "Para aceder à sala virtual, deverá aceder ao " + "<a href='http://criapva.com/?id=" + itemSala.id +
                                            "&formador=" + Uri.EscapeDataString(nomeformador) +
                                            "&ref=" + sessao.RefAccao +
@@ -928,7 +929,7 @@ namespace SalasZoomNotificationFormadores
                                                 (sexo == "F" ? "Professora " : "Professor ") + nomeformador + ",\n" +
                                                 "Estimamos que se encontre bem.\n\n" +
                                                 "Serve a presente SMS para relembrar o acesso à sala virtual da sessão de formação do modulo " +
-                                                sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental).\n\n" +
+                                                sessao.Modulo + " das " + horamodulo + (sessao.RefAccao.Contains("CFPIF_V4_ACO") ? " (horário dos Açores)" : " (horário de Portugal Continental)") + ".\n\n" +
                                                  "Para aceder à sala virtual, deverá aceder ao link e clicar no botão “Entrar no Zoom”:\n" +
                                                 "http://criapva.com/?id=" + itemSala.id +
                                                 "&formador=" + Uri.EscapeDataString(nomeformador) +
@@ -1183,7 +1184,7 @@ namespace SalasZoomNotificationFormadores
                                                    (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador + ",<br/><br/>" +
                                                    "Estimamos que se encontre bem.<br/>" +
                                                    "Serve o presente e-mail para relembrar o acesso à sala virtual da sessão de formação do módulo <b>" +
-                                                   sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>" +
+                                                   sessao.Modulo + " </b> das <b>" + horamodulo + " </b> "+(sessao.RefAccao.Contains("CFPIF_V4_ACO")? "(horário dos Açores)":"(horário de Portugal Continental)")+".<br/>" +
                                                    "Para aceder à sala virtual, deverá aceder ao " + "<a href='http://criapva.com/?id=" + itemSala.id +
                                                    "&formador=" + Uri.EscapeDataString(sessao.Formador) +
                                                    "&ref=" + sessao.RefAccao +
@@ -1229,7 +1230,7 @@ namespace SalasZoomNotificationFormadores
                                             (sexo == "F" ? "Professora " : "Professor ") + sessao.Formador  +",\n" +
                                             "Estimamos que se encontre bem.\n\n" +
                                             "Serve a presente SMS para relembrar o acesso à sala virtual da sessão de formação do modulo " +
-                                            sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental).\n\n" +
+                                            sessao.Modulo + " das " + horamodulo + (sessao.RefAccao.Contains("CFPIF_V4_ACO") ? " (horário dos Açores)" : " (horário de Portugal Continental)") + ".\n\n" + 
                                             "Para aceder à sala virtual, deverá aceder ao link e clicar no botão “Entrar no Zoom”:\n" +
                                             "http://criapva.com/?id=" + itemSala.id +
                                             "&formador=" + Uri.EscapeDataString(sessao.Formador) +
@@ -1391,7 +1392,7 @@ namespace SalasZoomNotificationFormadores
                                                  (sexo == "F" ? "Professora " : "Professor ") + nomeformador + "<br/><br/>" +
                                                  "Estimamos que se encontre bem.<br/>" +
                                                  "Serve o presente e-mail para relembrar o acesso à sala virtual da sessão de formação do módulo <b>" +
-                                                 sessao.Modulo + " </b> das <b>" + horamodulo + " </b> (horário de Portugal Continental).<br/>" +
+                                                 sessao.Modulo + " </b> das <b>" + horamodulo + " </b> " + (sessao.RefAccao.Contains("CFPIF_V4_ACO") ? "(horário dos Açores)" : "(horário de Portugal Continental)") + ".<br/>" +
                                                "Para aceder à sala virtual, deverá aceder ao " + "<a href='http://criapva.com/?id=" + itemSala.id +
                                                  "&formador=" + Uri.EscapeDataString(nomeformador) +
                                                  "&ref=" + sessao.RefAccao +
@@ -1436,7 +1437,7 @@ namespace SalasZoomNotificationFormadores
                                                  (sexo == "F" ? "Professora " : "Professor ") + nomeformador + ",\n" +
                                                  "Estimamos que se encontre bem.\n\n" +
                                                  "Serve a presente SMS para relembrar o acesso à sala virtual da sessão de formação do modulo " +
-                                                 sessao.Modulo + " das " + horamodulo + " (horário de Portugal Continental).\n\n" +
+                                                 sessao.Modulo + " das " + horamodulo + (sessao.RefAccao.Contains("CFPIF_V4_ACO") ? " (horário dos Açores)" : " (horário de Portugal Continental)") + ".\n\n" +
                                                   "Para aceder à sala virtual, deverá aceder ao link e clicar no botão “Entrar no Zoom”:\n" +
                                                  "http://criapva.com/?id=" + itemSala.id +
                                                  "&formador=" + Uri.EscapeDataString(nomeformador) +
