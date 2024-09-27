@@ -140,11 +140,11 @@ namespace SalasZoomNotificationFormadores
 
             //horasyncman = new DateTime(2022, 9, 29, 14, 0, 0);
             //horasyncman = new DateTime(2022, 10, 8, 8, 0, 0);
-            teste = true;
+            teste = false;
             if (!teste)
                 horasyncman = DateTime.Now;
             else
-                horasyncman = new DateTime(2024, 09, 27, 8, 0, 0);
+                horasyncman = new DateTime(2024, 09, 27, 14, 0, 0);
             Security.remote();
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
             Text += " V." + v.Major.ToString() + "." + v.Minor.ToString() + "." + v.Build.ToString();
@@ -479,16 +479,16 @@ namespace SalasZoomNotificationFormadores
         }
         private void SendEmail(string body, string assunto = "", bool error = false)
         {
-            NetworkCredential basicCredential = new NetworkCredential(Properties.Settings.Default.emailenvio, Properties.Settings.Default.passwordemail);
+            NetworkCredential basicCredential = new NetworkCredential("noreply@portaldoalunocriap.com", "criap@2024#");
             SmtpClient client = new SmtpClient();
             client.Port = 25;
-            client.Host = "mail.criap.com";
+            client.Host = "portaldoalunocriap.com";
             client.Timeout = 10000;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.Credentials = basicCredential;
 
             MailMessage mm = new MailMessage();
-            mm.From = new MailAddress("Instituto CRIAP <" + Properties.Settings.Default.emailenvio + "> ");
+            mm.From = new MailAddress("Instituto CRIAP <" + "noreply@portaldoalunocriap.com" + "> ");
 
             if (!teste)
             {
@@ -497,9 +497,12 @@ namespace SalasZoomNotificationFormadores
                 mm.To.Add("geral@criap.com");
                 mm.To.Add("luisgraca@criap.com");
                 mm.To.Add("informatica@criap.com");
+                mm.To.Add("sandra_aguilar1994@hotmail.com");
+                mm.To.Add("ritagoncalves91@gmail.com");
+
             }
             else
-                mm.To.Add("sandraaguilar@criap.com");
+                mm.To.Add("sandra_aguilar1994@hotmail.com");
             mm.Subject = assunto + " // " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToShortTimeString();
             mm.IsBodyHtml = false;
             mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -541,10 +544,10 @@ namespace SalasZoomNotificationFormadores
                 }
             }
 
-            NetworkCredential basicCredential = new NetworkCredential(Properties.Settings.Default.emailenvio, Properties.Settings.Default.passwordemail);
+            NetworkCredential basicCredential = new NetworkCredential("noreply@portaldoalunocriap.com", "criap@2024#");
             SmtpClient client = new SmtpClient();
             client.Port = 25;
-            client.Host = "mail.criap.com";
+            client.Host = "portaldoalunocriap.com";
             client.Timeout = 100000;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.Credentials = basicCredential;
@@ -610,11 +613,11 @@ namespace SalasZoomNotificationFormadores
                             if (ValidarEmail(email1.Trim()))
                             {
                                 MailMessage mm = new MailMessage();
-                                mm.From = new MailAddress("Instituto CRIAP <" + Properties.Settings.Default.emailenvio + "> ");
+                                mm.From = new MailAddress("Instituto CRIAP <" + "noreply@portaldoalunocriap.com" + "> ");
                                 if (!teste)
                                     mm.To.Add(email1.Trim());
                                 else
-                                    mm.To.Add("sandraaguilar@criap.com");
+                                    mm.To.Add("sandra_aguilar1994@hotmail.com");
                                 mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + sessao.HoraInicio.ToShortDateString();
                                 mm.IsBodyHtml = true;
                                 mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -824,11 +827,11 @@ namespace SalasZoomNotificationFormadores
                             if (ValidarEmail(email1.Trim()))
                             {
                                 MailMessage mm = new MailMessage();
-                                mm.From = new MailAddress("Instituto CRIAP <" + Properties.Settings.Default.emailenvio + "> ");
+                                mm.From = new MailAddress("Instituto CRIAP <" + "noreply@portaldoalunocriap.com" + "> ");
                                 if (!teste)
                                     mm.To.Add(email1.Trim());
                                 else
-                                    mm.To.Add("sandraaguilar@criap.com");
+                                    mm.To.Add("sandra_aguilar1994@hotmail.com");
                                 mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + sessao.HoraInicio.ToShortDateString();
                                 mm.IsBodyHtml = true;
                                 mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -1041,10 +1044,10 @@ namespace SalasZoomNotificationFormadores
                 }
             }
 
-            NetworkCredential basicCredential = new NetworkCredential(Properties.Settings.Default.emailenvio, Properties.Settings.Default.passwordemail);
+            NetworkCredential basicCredential = new NetworkCredential("noreply@portaldoalunocriap.com", "criap@2024#");
             SmtpClient client = new SmtpClient();
             client.Port = 25;
-            client.Host = "mail.criap.com";
+            client.Host = "portaldoalunocriap.com";
             client.Timeout = 100000;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.Credentials = basicCredential;
@@ -1106,11 +1109,11 @@ namespace SalasZoomNotificationFormadores
                         if (ValidarEmail(email1.Trim()))
                         {
                             MailMessage mm = new MailMessage();
-                            mm.From = new MailAddress("Instituto CRIAP <" + Properties.Settings.Default.emailenvio + "> ");
+                            mm.From = new MailAddress("Instituto CRIAP <" + "noreply@portaldoalunocriap.com" + "> ");
                             if (!teste)
                                 mm.To.Add(email1.Trim());
                             else
-                                mm.To.Add("sandraaguilar@criap.com");
+                                mm.To.Add("sandra_aguilar1994@hotmail.com");
                             mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + sessao.HoraInicio.ToShortDateString();
                             mm.IsBodyHtml = true;
                             mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -1331,11 +1334,11 @@ namespace SalasZoomNotificationFormadores
                         if (ValidarEmail(email1.Trim()))
                         {
                             MailMessage mm = new MailMessage();
-                            mm.From = new MailAddress("Instituto CRIAP <" + Properties.Settings.Default.emailenvio + "> ");
+                            mm.From = new MailAddress("Instituto CRIAP <" + "noreply@portaldoalunocriap.com" + "> ");
                             if (!teste)
                                 mm.To.Add(email1.Trim());
                             else
-                                mm.To.Add("sandraaguilar@criap.com");
+                                mm.To.Add("sandra_aguilar1994@hotmail.com");
                             mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + sessao.HoraInicio.ToShortDateString();
                             mm.IsBodyHtml = true;
                             mm.BodyEncoding = UTF8Encoding.UTF8;
