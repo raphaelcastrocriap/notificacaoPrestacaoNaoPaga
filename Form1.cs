@@ -140,7 +140,7 @@ namespace SalasZoomNotificationFormadores
 
             //horasyncman = new DateTime(2022, 9, 29, 14, 0, 0);
             //horasyncman = new DateTime(2022, 10, 8, 8, 0, 0);
-            teste = false;
+            teste = true;
             if (!teste)
                 horasyncman = DateTime.Now;
             else
