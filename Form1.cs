@@ -497,8 +497,8 @@ namespace SalasZoomNotificationFormadores
                 mm.To.Add("geral@criap.com");
                 mm.To.Add("luisgraca@criap.com");
                 mm.To.Add("informatica@criap.com");
-                mm.To.Add("sandra_aguilar1994@hotmail.com");
-                mm.To.Add("ritagoncalves91@gmail.com");
+                //mm.To.Add("sandra_aguilar1994@hotmail.com");
+                //mm.To.Add("ritagoncalves91@gmail.com");
 
             }
             else
