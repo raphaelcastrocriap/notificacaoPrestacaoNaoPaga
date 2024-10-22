@@ -145,7 +145,7 @@ namespace SalasZoomNotificationFormadores
                 horasyncman = DateTime.Now;
             else
                 horasyncman = new DateTime(2024, 09, 27, 14, 0, 0);
-
+            
             Security.remote();
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
             Text += " V." + v.Major.ToString() + "." + v.Minor.ToString() + "." + v.Build.ToString();
