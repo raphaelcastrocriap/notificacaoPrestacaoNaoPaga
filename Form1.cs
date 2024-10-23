@@ -144,7 +144,7 @@ namespace SalasZoomNotificationFormadores
             if (!teste)
                 horasyncman = DateTime.Now;
             else
-                horasyncman = new DateTime(2024, 09, 27, 14, 0, 0);
+                horasyncman = new DateTime(2024, 10, 23, 14, 0, 0);
             
             Security.remote();
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
@@ -503,7 +503,7 @@ namespace SalasZoomNotificationFormadores
 
             }
             else
-                mm.To.Add("sandra_aguilar1994@hotmail.com");
+                mm.To.Add("assistenciatecnica@criap.com");
             mm.Subject = assunto + " // " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToShortTimeString();
             mm.IsBodyHtml = false;
             mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -618,7 +618,7 @@ namespace SalasZoomNotificationFormadores
                                 if (!teste)
                                     mm.To.Add(email1.Trim());
                                 else
-                                    mm.To.Add("sandraaguilar@criap.com");
+                                    mm.To.Add("assistenciatecnica@criap.com");
                                 mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + sessao.HoraInicio.ToShortDateString();
                                 mm.IsBodyHtml = true;
                                 mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -832,7 +832,7 @@ namespace SalasZoomNotificationFormadores
                                 if (!teste)
                                     mm.To.Add(email1.Trim());
                                 else
-                                    mm.To.Add("sandraaguilar@criap.com");
+                                    mm.To.Add("assistenciatecnica@criap.com");
                                 mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + sessao.HoraInicio.ToShortDateString();
                                 mm.IsBodyHtml = true;
                                 mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -1114,7 +1114,7 @@ namespace SalasZoomNotificationFormadores
                             if (!teste)
                                 mm.To.Add(email1.Trim());
                             else
-                                mm.To.Add("sandraaguilar@criap.com");
+                                mm.To.Add("assistenciatecnica@criap.com");
                             mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + sessao.HoraInicio.ToShortDateString();
                             mm.IsBodyHtml = true;
                             mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -1339,7 +1339,7 @@ namespace SalasZoomNotificationFormadores
                             if (!teste)
                                 mm.To.Add(email1.Trim());
                             else
-                                mm.To.Add("sandraaguilar@criap.com");
+                                mm.To.Add("assistenciatecnica@criap.com");
                             mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + sessao.HoraInicio.ToShortDateString();
                             mm.IsBodyHtml = true;
                             mm.BodyEncoding = UTF8Encoding.UTF8;
