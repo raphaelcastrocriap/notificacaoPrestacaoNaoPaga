@@ -144,7 +144,7 @@ namespace SalasZoomNotificationFormadores
             if (!teste)
                 horasyncman = DateTime.Now;
             else
-                horasyncman = new DateTime(2024, 10, 23, 14, 0, 0);
+                horasyncman = new DateTime(2024, 10, 25, 14, 0, 0);
             
             Security.remote();
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
