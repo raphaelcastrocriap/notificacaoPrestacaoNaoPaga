@@ -1948,7 +1948,7 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:v4.5.2   "
+                "FrameworkVersion" = "8:v4.5.2    "
                 "AllowLaterVersions" = "11:FALSE"
                 "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=395269"
                 }
@@ -6279,15 +6279,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Setup Salas Zoom Notification Formadores"
-        "ProductCode" = "8:{9D9CAD9C-F85A-43AD-95B3-CCC62FD83DAF}"
-        "PackageCode" = "8:{165A7B33-D8A2-410A-9836-4AFE1EF0061E}"
+        "ProductCode" = "8:{4854A4B7-E0B2-4E37-8B01-A7ACA0E0CE69}"
+        "PackageCode" = "8:{B6ABEA24-1D2D-42A1-95D3-F9C294503E7A}"
         "UpgradeCode" = "8:{AB5A2254-CF07-4CD9-9AA3-64F35339D097}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.0.10"
+        "ProductVersion" = "8:2.0.11"
         "Manufacturer" = "8:Instituto Criap"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
