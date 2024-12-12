@@ -137,14 +137,14 @@ namespace SalasZoomNotificationFormadores
         private void Form1_Load(object sender, EventArgs e)
 
         {
-
+           
             //horasyncman = new DateTime(2022, 9, 29, 14, 0, 0);
             //horasyncman = new DateTime(2022, 10, 8, 8, 0, 0);
-            teste = true;
+            teste = false;
             if (!teste)
                 horasyncman = DateTime.Now;
             else
-                horasyncman = new DateTime(2024, 10, 25, 14, 0, 0);
+                horasyncman = DateTime.Now; //new DateTime(2024, 12, 12, 14, 0, 0);
             
             Security.remote();
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
@@ -498,12 +498,11 @@ namespace SalasZoomNotificationFormadores
                 mm.To.Add("geral@criap.com");
                 mm.To.Add("luisgraca@criap.com");
                 mm.To.Add("informatica@criap.com");
-                //mm.To.Add("sandra_aguilar1994@hotmail.com");
-                //mm.To.Add("ritagoncalves91@gmail.com");
+                
 
             }
             else
-                mm.To.Add("assistenciatecnica@criap.com");
+                mm.To.Add("sandraaguilar@criap.com");
             mm.Subject = assunto + " // " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToShortTimeString();
             mm.IsBodyHtml = false;
             mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -618,7 +617,7 @@ namespace SalasZoomNotificationFormadores
                                 if (!teste)
                                     mm.To.Add(email1.Trim());
                                 else
-                                    mm.To.Add("assistenciatecnica@criap.com");
+                                    mm.To.Add("sandraaguilar@criap.com");
                                 mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + sessao.HoraInicio.ToShortDateString();
                                 mm.IsBodyHtml = true;
                                 mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -677,11 +676,7 @@ namespace SalasZoomNotificationFormadores
                                           "Estimamos que se encontre bem.<br/>" +
                                           "Serve o presente e-mail para relembrar o acesso à sala virtual da sessão de formação do módulo <b>" +
                                           sessao.Modulo + " </b> das <b>" + horamodulo + " </b> " + (sessao.RefAccao.Contains("CFPIF_V4_ACO") ? "(horário dos Açores)" : "(horário de Portugal Continental)") + ".<br/>" +
-                                          "Para aceder à sala virtual, deverá aceder ao " + "<a href='http://criapva.com/?id=" + itemSala.id +
-                                          "&formador=" + Uri.EscapeDataString(sessao.Formador) +
-                                          "&ref=" + sessao.RefAccao +
-                                          "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
-                                          "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "'>" + "Link de acesso</a>" + " " + "e clicar no botão <b>“Entrar no Zoom”</b>.<br/><br/>" +
+                                          "Para aceder à sala virtual, deverá aceder ao " + "<a href='https://criapva.server1.criap.com/?idf="+sessao.CodFormador+"&meeting_id="+ long.Parse(meeting[2].ToString()).ToString() + "'>" + "Link de acesso</a>" + " " + "e clicar no botão <b>“Entrar no Zoom”</b>.<br/><br/>" +
 
                                           "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
                                          "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail " +
@@ -724,11 +719,7 @@ namespace SalasZoomNotificationFormadores
                                                 "Serve a presente SMS para relembrar o acesso à sala virtual da sessão de formação do modulo " +
                                                 sessao.Modulo + " das " + horamodulo + (sessao.RefAccao.Contains("CFPIF_V4_ACO") ? " (horário dos Açores)" : " (horário de Portugal Continental)") + ".\n\n" +
                                                 "Para aceder à sala virtual, deverá aceder ao link e clicar no botão “Entrar no Zoom”:\n" +
-                                                "http://criapva.com/?id=" + itemSala.id +
-                                                "&formador=" + Uri.EscapeDataString(sessao.Formador) +
-                                                "&ref=" + sessao.RefAccao +
-                                                "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
-                                                "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "\n\n" +
+                                                "https://criapva.server1.criap.com/?idf=" + sessao.CodFormador + "&meeting_id=" + long.Parse(meeting[2].ToString()).ToString() + "\n\n" +
 
                                                  "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.\n\n" +
                                                "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail " +
@@ -832,7 +823,7 @@ namespace SalasZoomNotificationFormadores
                                 if (!teste)
                                     mm.To.Add(email1.Trim());
                                 else
-                                    mm.To.Add("assistenciatecnica@criap.com");
+                                    mm.To.Add("sandraaguilar@criap.com");
                                 mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + sessao.HoraInicio.ToShortDateString();
                                 mm.IsBodyHtml = true;
                                 mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -889,11 +880,7 @@ namespace SalasZoomNotificationFormadores
                                            "Estimamos que se encontre bem.<br/>" +
                                            "Serve o presente e-mail para relembrar o acesso à sala virtual da sessão de formação do módulo <b>" +
                                            sessao.Modulo + " </b> das <b>" + horamodulo + " </b> " + (sessao.RefAccao.Contains("CFPIF_V4_ACO") ? "(horário dos Açores)" : "(horário de Portugal Continental)") + ".<br/>" +
-                                           "Para aceder à sala virtual, deverá aceder ao " + "<a href='http://criapva.com/?id=" + itemSala.id +
-                                           "&formador=" + Uri.EscapeDataString(nomeformador) +
-                                           "&ref=" + sessao.RefAccao +
-                                           "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
-                                           "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "'>" + "Link de acesso</a>" + " " + "e clicar no botão <b>“Entrar no Zoom”</b>.<br/><br/>" +
+                                           "Para aceder à sala virtual, deverá aceder ao " + "<a href='https://criapva.server1.criap.com/?idf=" + sessao.CodFormador + "&meeting_id=" + long.Parse(meeting[2].ToString()).ToString() + "'>" + "Link de acesso</a>" + " " + "e clicar no botão <b>“Entrar no Zoom”</b>.<br/><br/>" +
 
                                          "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
                                          "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail " +
@@ -935,11 +922,7 @@ namespace SalasZoomNotificationFormadores
                                                 "Serve a presente SMS para relembrar o acesso à sala virtual da sessão de formação do modulo " +
                                                 sessao.Modulo + " das " + horamodulo + (sessao.RefAccao.Contains("CFPIF_V4_ACO") ? " (horário dos Açores)" : " (horário de Portugal Continental)") + ".\n\n" +
                                                  "Para aceder à sala virtual, deverá aceder ao link e clicar no botão “Entrar no Zoom”:\n" +
-                                                "http://criapva.com/?id=" + itemSala.id +
-                                                "&formador=" + Uri.EscapeDataString(nomeformador) +
-                                                "&ref=" + sessao.RefAccao +
-                                                "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
-                                                "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "\n\n" +
+                                                "https://criapva.server1.criap.com/?idf=" + sessao.CodFormador + "&meeting_id=" + long.Parse(meeting[2].ToString()).ToString() +  "\n\n" +
 
                                                 "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.\n\n" +
                                                 "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail " +
@@ -1114,7 +1097,7 @@ namespace SalasZoomNotificationFormadores
                             if (!teste)
                                 mm.To.Add(email1.Trim());
                             else
-                                mm.To.Add("assistenciatecnica@criap.com");
+                                mm.To.Add("sandraaguilar@criap.com");
                             mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + sessao.HoraInicio.ToShortDateString();
                             mm.IsBodyHtml = true;
                             mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -1189,11 +1172,7 @@ namespace SalasZoomNotificationFormadores
                                                    "Estimamos que se encontre bem.<br/>" +
                                                    "Serve o presente e-mail para relembrar o acesso à sala virtual da sessão de formação do módulo <b>" +
                                                    sessao.Modulo + " </b> das <b>" + horamodulo + " </b> "+(sessao.RefAccao.Contains("CFPIF_V4_ACO")? "(horário dos Açores)":"(horário de Portugal Continental)")+".<br/>" +
-                                                   "Para aceder à sala virtual, deverá aceder ao " + "<a href='http://criapva.com/?id=" + itemSala.id +
-                                                   "&formador=" + Uri.EscapeDataString(sessao.Formador) +
-                                                   "&ref=" + sessao.RefAccao +
-                                                   "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
-                                                   "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "'>" + "Link de acesso</a>" + " " + "e clicar no botão <b>“Entrar no Zoom”</b>.<br/><br/>" +
+                                                   "Para aceder à sala virtual, deverá aceder ao " + "<a href='https://criapva.server1.criap.com/?idf=" + sessao.CodFormador + "&meeting_id=" + long.Parse(meeting[2].ToString()).ToString() + "'>" + "Link de acesso</a>" + " " + "e clicar no botão <b>“Entrar no Zoom”</b>.<br/><br/>" +
 
                                                  "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
                                                  "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail " +
@@ -1236,11 +1215,7 @@ namespace SalasZoomNotificationFormadores
                                             "Serve a presente SMS para relembrar o acesso à sala virtual da sessão de formação do modulo " +
                                             sessao.Modulo + " das " + horamodulo + (sessao.RefAccao.Contains("CFPIF_V4_ACO") ? " (horário dos Açores)" : " (horário de Portugal Continental)") + ".\n\n" + 
                                             "Para aceder à sala virtual, deverá aceder ao link e clicar no botão “Entrar no Zoom”:\n" +
-                                            "http://criapva.com/?id=" + itemSala.id +
-                                            "&formador=" + Uri.EscapeDataString(sessao.Formador) +
-                                            "&ref=" + sessao.RefAccao +
-                                            "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
-                                            "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "\n\n" +
+                                            "https://criapva.server1.criap.com/?idf=" + sessao.CodFormador + "&meeting_id=" + long.Parse(meeting[2].ToString()).ToString() + "\n\n" +
 
                                              "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.\n\n" +
                                                "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail " +
@@ -1339,7 +1314,7 @@ namespace SalasZoomNotificationFormadores
                             if (!teste)
                                 mm.To.Add(email1.Trim());
                             else
-                                mm.To.Add("assistenciatecnica@criap.com");
+                                mm.To.Add("sandraaguilar@criap.com");
                             mm.Subject = sessao.RefAccao + " || " + editcurso + " // aula: " + sessao.HoraInicio.ToShortDateString();
                             mm.IsBodyHtml = true;
                             mm.BodyEncoding = UTF8Encoding.UTF8;
@@ -1397,11 +1372,7 @@ namespace SalasZoomNotificationFormadores
                                                  "Estimamos que se encontre bem.<br/>" +
                                                  "Serve o presente e-mail para relembrar o acesso à sala virtual da sessão de formação do módulo <b>" +
                                                  sessao.Modulo + " </b> das <b>" + horamodulo + " </b> " + (sessao.RefAccao.Contains("CFPIF_V4_ACO") ? "(horário dos Açores)" : "(horário de Portugal Continental)") + ".<br/>" +
-                                               "Para aceder à sala virtual, deverá aceder ao " + "<a href='http://criapva.com/?id=" + itemSala.id +
-                                                 "&formador=" + Uri.EscapeDataString(nomeformador) +
-                                                 "&ref=" + sessao.RefAccao +
-                                                 "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
-                                                 "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "'>" + "Link de acesso</a>" + " " + "e clicar no botão <b>“Entrar no Zoom”</b>.<br/><br/>" +
+                                               "Para aceder à sala virtual, deverá aceder ao " + "<a href='https://criapva.server1.criap.com/?idf=" + sessao.CodFormador + "&meeting_id=" + long.Parse(meeting[2].ToString()).ToString() + "'>" + "Link de acesso</a>" + " " + "e clicar no botão <b>“Entrar no Zoom”</b>.<br/><br/>" +
 
                                                "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.<br/><br/>" +
                                                "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail " +
@@ -1443,11 +1414,7 @@ namespace SalasZoomNotificationFormadores
                                                  "Serve a presente SMS para relembrar o acesso à sala virtual da sessão de formação do modulo " +
                                                  sessao.Modulo + " das " + horamodulo + (sessao.RefAccao.Contains("CFPIF_V4_ACO") ? " (horário dos Açores)" : " (horário de Portugal Continental)") + ".\n\n" +
                                                   "Para aceder à sala virtual, deverá aceder ao link e clicar no botão “Entrar no Zoom”:\n" +
-                                                 "http://criapva.com/?id=" + itemSala.id +
-                                                 "&formador=" + Uri.EscapeDataString(nomeformador) +
-                                                 "&ref=" + sessao.RefAccao +
-                                                 "&hsessao=" + Uri.EscapeDataString(sessao.HoraInicio.ToString("yyyy-MM-dd HH:mm")) +
-                                                 "&linkRegistrant=" + Uri.EscapeDataString(linkRegistrant) + "\n\n" +
+                                                 "https://criapva.server1.criap.com/?idf=" + sessao.CodFormador + "&meeting_id=" + long.Parse(meeting[2].ToString()).ToString() + "\n\n" +
 
                                                  "Aproveitamos para relembrar que, sempre que possível, o acesso à sala virtual deverá ser feito com 30 minutos de antecedência para teste de som e imagem.\n\n" +
                                                  "Para qualquer questão adicional, estarei à sua inteira disposição, enquanto Coordenadora de Curso, através do endereço de e-mail " +
