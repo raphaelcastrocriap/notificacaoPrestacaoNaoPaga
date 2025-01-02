@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32002.185
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalasZoomNotificationFormadores", "SalasZoomNotificationFormadores.csproj", "{33D9ED6D-907C-44A2-AB7B-F25C3AAFC35C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "notificacaoPrestacaoNaoPaga", "notificacaoPrestacaoNaoPaga.csproj", "{33D9ED6D-907C-44A2-AB7B-F25C3AAFC35C}"
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{AF150D00-F1C4-42D2-819D-C826E06A3AEB}"
 EndProject
