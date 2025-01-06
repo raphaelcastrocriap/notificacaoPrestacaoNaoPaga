@@ -18,6 +18,14 @@ using System.IO;
 using System.Drawing;
 //using MySqlX.XDevAPI;
 using System.Security.Cryptography;
+using MySql.Data.MySqlClient.Memcached;
+using Org.BouncyCastle.Asn1.Crmf;
+using RestSharp;
+using Newtonsoft.Json;
+using static System.Net.Mime.MediaTypeNames;
+using System.Web.UI.WebControls;
+using Word = Microsoft.Office.Interop.Word;
+using System.Runtime.InteropServices;
 
 namespace SalasZoomNotificationFormadores
 {
@@ -77,63 +85,63 @@ namespace SalasZoomNotificationFormadores
             return (emailtxtcoordenador, telemovelCoordenacao);
         }
 
-        public string RetornaImgBase64(string caminhoImagem, int novaLargura = 100, int novaAltura = 100)
-        {
-            Image RedimensionaImagem(Image imagem, int largura, int altura)
-            {
-                var bmp = new Bitmap(largura, altura);
-                using (var graphics = Graphics.FromImage(bmp))
-                {
-                    graphics.DrawImage(imagem, 0, 0, largura, altura);
-                }
-                return bmp;
-            }
+        //public string RetornaImgBase64(string caminhoImagem, int novaLargura = 100, int novaAltura = 100)
+        //{
+        //    Image RedimensionaImagem(Image imagem, int largura, int altura)
+        //    {
+        //        var bmp = new Bitmap(largura, altura);
+        //        using (var graphics = Graphics.FromImage(bmp))
+        //        {
+        //            graphics.DrawImage(imagem, 0, 0, largura, altura);
+        //        }
+        //        return bmp;
+        //    }
 
-            try
-            {
-                if (Uri.IsWellFormedUriString(caminhoImagem, UriKind.Absolute))
-                {
-                    using (WebClient client = new WebClient())
-                    {
-                        byte[] imageBytes = client.DownloadData(caminhoImagem);
-                        using (var ms = new MemoryStream(imageBytes))
-                        {
-                            var imagemOriginal = Image.FromStream(ms);
-                            var imagemReduzida = RedimensionaImagem(imagemOriginal, novaLargura, novaAltura);
-                            using (var msReduzido = new MemoryStream())
-                            {
-                                imagemReduzida.Save(msReduzido, imagemOriginal.RawFormat);
-                                string base64String = Convert.ToBase64String(msReduzido.ToArray());
-                                return base64String;
-                            }
-                        }
-                    }
-                }
-                else if (File.Exists(caminhoImagem))
-                {
-                    using (var imagemOriginal = Image.FromFile(caminhoImagem))
-                    {
-                        var imagemReduzida = RedimensionaImagem(imagemOriginal, novaLargura, novaAltura);
-                        using (var msReduzido = new MemoryStream())
-                        {
-                            imagemReduzida.Save(msReduzido, imagemOriginal.RawFormat);
-                            string base64String = Convert.ToBase64String(msReduzido.ToArray());
-                            return base64String;
-                        }
-                    }
-                }
-                else
-                {
-                    MessageBox.Show($"Arquivo não encontrado: {caminhoImagem}");
-                    return string.Empty;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Erro ao processar a imagem: {ex.Message}");
-                return string.Empty;
-            }
-        }
+        //    try
+        //    {
+        //        if (Uri.IsWellFormedUriString(caminhoImagem, UriKind.Absolute))
+        //        {
+        //            using (WebClient client = new WebClient())
+        //            {
+        //                byte[] imageBytes = client.DownloadData(caminhoImagem);
+        //                using (var ms = new MemoryStream(imageBytes))
+        //                {
+        //                    var imagemOriginal = Image.FromStream(ms);
+        //                    var imagemReduzida = RedimensionaImagem(imagemOriginal, novaLargura, novaAltura);
+        //                    using (var msReduzido = new MemoryStream())
+        //                    {
+        //                        imagemReduzida.Save(msReduzido, imagemOriginal.RawFormat);
+        //                        string base64String = Convert.ToBase64String(msReduzido.ToArray());
+        //                        return base64String;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        else if (File.Exists(caminhoImagem))
+        //        {
+        //            using (var imagemOriginal = Image.FromFile(caminhoImagem))
+        //            {
+        //                var imagemReduzida = RedimensionaImagem(imagemOriginal, novaLargura, novaAltura);
+        //                using (var msReduzido = new MemoryStream())
+        //                {
+        //                    imagemReduzida.Save(msReduzido, imagemOriginal.RawFormat);
+        //                    string base64String = Convert.ToBase64String(msReduzido.ToArray());
+        //                    return base64String;
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            MessageBox.Show($"Arquivo não encontrado: {caminhoImagem}");
+        //            return string.Empty;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"Erro ao processar a imagem: {ex.Message}");
+        //        return string.Empty;
+        //    }
+        //}
         private void Form1_Load(object sender, EventArgs e)
 
         {
@@ -160,7 +168,7 @@ namespace SalasZoomNotificationFormadores
                 Cursor.Current = Cursors.WaitCursor;
                 ExecuteSync();
                 Cursor.Current = Cursors.Default;
-                Application.Exit();
+                System.Windows.Forms.Application.Exit();
             }
 
 
@@ -186,11 +194,11 @@ namespace SalasZoomNotificationFormadores
                 errorTextBox.Clear();
                 newCursoTextBox.Clear();
                 StartSmsService();
-                Get_Colaboradores();
-                Get_Salas();
-                GetHT_data(horasyncman, horasyncman);
-                GetFormacaoExterna(horasyncman, horasyncman);
-                GetSecretariaData();
+                Get_Formandos();
+                //Get_Salas();
+                //GetHT_data(horasyncman, horasyncman);
+                //GetFormacaoExterna(horasyncman, horasyncman);
+                //GetSecretariaData();
 
                 if (horasyncman.DayOfWeek == DayOfWeek.Saturday || horasyncman.DayOfWeek == DayOfWeek.Sunday)
                 {
@@ -203,7 +211,7 @@ namespace SalasZoomNotificationFormadores
                 {
                     Envia_emails_formadores();
                 }
-                SendEmail(richTextBox1.Text, "Notification Salas Zoom // Formadores - Emails enviados", true);
+                //SendEmail(richTextBox1.Text, "Notification Pendências // Formadores - Emails enviados", true);
             }
             catch (Exception e)
             {
@@ -211,20 +219,21 @@ namespace SalasZoomNotificationFormadores
                 TimeSpan delay = new TimeSpan(0, 5, 0);
                 if (e.Message.Contains("Foi estabelecida ligação com êxito ao servidor, mas, em seguida, ocorreu um erro durante o handshake anterior ao início de sessão"))
                 {
-                    SendEmail(richTextBox1.Text + "\n\n" + e.ToString() + "\n" + "IMPORTANTE: Em 5 min será executada a rotina outra vez...", "Notification Salas Zoom // Formadores - HANDSHAKE ERROR", true);
+                    //SendEmail(richTextBox1.Text + "\n\n" + e.ToString() + "\n" + "IMPORTANTE: Em 5 min será executada a rotina outra vez...", "Notificação Pendência de Pagamento // Formadores - HANDSHAKE ERROR", true);
 
                     Thread.Sleep(delay);
                     ExecuteSync();
                 }
                 else if (e.Message.Contains("Não foi possível criar um canal seguro SSL/TLS"))
                 {
-                    SendEmail(richTextBox1.Text + "\n\n" + e.ToString() + "\n" + "IMPORTANTE: Em 5 min será executada a rotina outra vez...", "Notification Salas Zoom // Formadores - canal seguro SSL/TLS", true);
+                    //SendEmail(richTextBox1.Text + "\n\n" + e.ToString() + "\n" + "IMPORTANTE: Em 5 min será executada a rotina outra vez...", "Notificação Pendência de Pagamento // Formadores - canal seguro SSL/TLS", true);
 
                     Thread.Sleep(delay);
                     ExecuteSync();
                 }
-                else
-                    SendEmail(richTextBox1.Text + "\n\n" + e.ToString(), "Notification Salas Zoom // Formadores - ERROR ", true);
+                else {
+                    //SendEmail(richTextBox1.Text + "\n\n" + e.ToString(), "Notificação Pendência de Pagamento // Formadores - ERROR ", true);
+                }
 
             }
         }
@@ -265,10 +274,10 @@ namespace SalasZoomNotificationFormadores
                     }
 
                     string nometecnicoass = dataList[i][19].ToString();
-                    int index = db.listaColaboradores.FindIndex(x => x.codigo_Colaborador == dataList[i][19].ToString());
+                    int index = db.listaFormandos.FindIndex(x => x.codigo_Colaborador == dataList[i][19].ToString());
                     if (index > 0)
                     {
-                        nometecnicoass = db.listaColaboradores.Find(x => x.codigo_Colaborador == dataList[i][19].ToString()).sigla;
+                        nometecnicoass = db.listaFormandos.Find(x => x.codigo_Colaborador == dataList[i][19].ToString()).sigla;
                     }
 
                     string CODCOLABORADOR = "";
@@ -283,10 +292,10 @@ namespace SalasZoomNotificationFormadores
                     dbConnect.secretariaVirtual.ConnEnd();
 
                     string tecnicosalavirtual = "";
-                    int index2 = db.listaColaboradores.FindIndex(x => x.codigo_Colaborador == CODCOLABORADOR);
+                    int index2 = db.listaFormandos.FindIndex(x => x.codigo_Colaborador == CODCOLABORADOR);
                     if (index2 > 0)
                     {
-                        tecnicosalavirtual = db.listaColaboradores.Find(x => x.codigo_Colaborador == CODCOLABORADOR).sigla;
+                        tecnicosalavirtual = db.listaFormandos.Find(x => x.codigo_Colaborador == CODCOLABORADOR).sigla;
                     }
                     var obj = new objSessao()
                     {
@@ -406,33 +415,199 @@ namespace SalasZoomNotificationFormadores
                 subData.Dispose();
             }
         }
-        public static void Get_Colaboradores()
+        public void Get_Formandos()
         {
-            db.listaColaboradores.Clear();
-            string subQuery = "SELECT codigo_Colaborador, nome, email, sigla FROM DEST_Colaboradores";
-            dbConnect.secretariaVirtual.ConnInit();
-            SqlDataAdapter adapter = new SqlDataAdapter(subQuery, dbConnect.secretariaVirtual.Conn);
-            DataTable subData = new DataTable();
-            adapter.Fill(subData);
-            List<DataRow> dataList = subData.AsEnumerable().ToList();
-            dbConnect.secretariaVirtual.ConnEnd();
-
-            if (dataList.Count != 0)
+            try
             {
-                for (int i = 0; i < dataList.Count; i++)
+                db.listaFormandos.Clear();
+
+                string subQuery = $@"SELECT tf.Codigo_Formando, tf.NC, tf.Formando, tf.Sexo, tf.Nome_Abreviado, Cc.Telefone1, Cc.Telefone2, Cc.Email1, Cc.Email2, c.Descricao AS Curso, ta.Ref_Accao AS Ação, 
+                    CASE WHEN ta.Codigo_Estado = 1 THEN 'Confirmado' WHEN ta.Codigo_Estado = 4 THEN 'Em análise' END AS Estado, 
+                    tp.Valor_desconto AS 'Valor', tp.Descricao, tp.data_prestacao 
+                    FROM TBForFormandos tf 
+                    INNER JOIN TBForFinOrdensFaturacaoPlano tp ON tp.Rowid_entidade = tf.versao_rowid 
+                    INNER JOIN TBForAccoes ta ON ta.versao_rowid = tp.Rowid_Opcao 
+                    INNER JOIN TBForCursos c ON ta.Codigo_Curso = c.Codigo_Curso 
+                    LEFT JOIN TBGerContactos Cc ON tf.versao_rowid = Cc.Codigo_Entidade 
+                    WHERE tp.pago = 0 AND Cc.Tipo_Entidade=3 AND tp.data_prestacao = '{DateTime.Now.AddDays(+2):yyyy-MM-dd}' 
+                    AND TRY_CAST(LEFT(tp.Descricao, 1) AS INT) > 2 AND SUBSTRING(tp.Descricao, 2, 1) = 'ª' AND tf.Codigo_Formando=29207
+                    ORDER BY tf.Codigo_Formando, tp.Descricao";
+
+                dbConnect.ht2.ConnInit();
+                SqlDataAdapter adapter = new SqlDataAdapter(subQuery, dbConnect.ht2.Conn);
+                DataTable subData = new DataTable();
+                adapter.Fill(subData);
+                dbConnect.ht2.ConnEnd();
+
+                if (subData.Rows.Count > 0)
                 {
-                    var obj = new objColaborador()
+                    // Caminho do modelo
+                    string docPath = @"\\192.168.1.211\Documentos\criapgeral\CriapFPApps\CRIAPContratos\docs\emailBody\notificacaoEmailAlunosMensalidadePendente.docx";
+                    string tempDocPath = Path.Combine(Path.GetTempPath(), $"notificacao_temp_{Guid.NewGuid()}.docx");
+
+                    // Copiar o documento modelo para um local temporário
+                    File.Copy(docPath, tempDocPath, true);
+
+                    Word.Application wordApp = new Word.Application();
+                    Word.Document wordDoc = null;
+
+                    try
                     {
-                        codigo_Colaborador = dataList[i][0].ToString(),
-                        nome = dataList[i][1].ToString(),
-                        email = dataList[i][2].ToString(),
-                        nomeemail = dataList[i][1].ToString() + " - " + dataList[i][2].ToString(),
-                        sigla = dataList[i][3].ToString()
-                    };
-                    db.listaColaboradores.Add(obj);
+                        wordDoc = wordApp.Documents.Open(tempDocPath);
+
+                        // Encontra a tabela no documento
+                        Word.Table table = wordDoc.Tables[1];
+
+                        // Agrupamento por Codigo_Formando
+                        var formandosAgrupados = subData.AsEnumerable()
+                            .GroupBy(row => row["Codigo_Formando"].ToString())
+                            .Select(grupo => new
+                            {
+                                Codigo_Formando = grupo.Key,
+                                NC = grupo.First()["NC"].ToString(),
+                                Nome = grupo.First()["Formando"].ToString(),
+                                Nome_Abreviado = grupo.First()["Nome_Abreviado"].ToString(),
+                                Email1 = grupo.First()["Email1"].ToString(),
+                                Sexo = grupo.First()["Sexo"].ToString(),
+                                ParcelaDetalhes = grupo.Select(row => new
+                                {
+                                    Descricao = row["Descricao"].ToString(),
+                                    Ref_Accao = row["Ação"].ToString(),
+                                    DataPrestacao = Convert.ToDateTime(row["data_prestacao"]),
+                                    ValorParcela = Convert.ToDecimal(row["Valor"]),
+                                    ValorComMulta = Convert.ToDecimal(row["Valor"]) + 25 // Adicionando multa
+                                }).ToList()
+                            }).ToList();
+
+                        foreach (var formando in formandosAgrupados)
+                        {
+                            foreach (var parcela in formando.ParcelaDetalhes)
+                            {
+                                // Adiciona uma nova linha na tabela
+                                Word.Row newRow = table.Rows.Add();
+
+                                // Coluna 1: Mensalidade
+                                newRow.Cells[1].Range.Text = parcela.Descricao + " (" + parcela.Ref_Accao + ")";
+
+                                // Coluna 2: Data de Vencimento
+                                newRow.Cells[2].Range.Text = parcela.DataPrestacao.ToString("dd-MM-yyyy");
+
+                                // Coluna 3: Valor
+                                newRow.Cells[3].Range.Text = $"Mensalidade: {parcela.ValorParcela:F2}€ + Taxa administrativa: 25€";
+                            }
+
+                            // Dados para substituição no documento
+                            var replacements = new Dictionary<string, string>
+                                {
+                                    { "«entidade»", formando.Codigo_Formando },
+                                    { "«referencia»", formando.NC }, // Substituir pelo valor correto da referência gerada
+                                    { "«valor»", formando.ParcelaDetalhes.Sum(p => p.ValorComMulta).ToString("F2") },
+                                    { "«nome»", (formando.Sexo == "F") ? " Estimada formanda" + formando.Nome_Abreviado: " Estimado formando" + formando.Nome_Abreviado }
+                                };
+
+                            // Substituir as variáveis no documento
+                            ReplaceVariables(wordDoc, replacements);
+
+                            // Salvar alterações no documento temporário
+                            wordDoc.Save();
+
+                            // Fecha o documento
+                            wordDoc.Close(Word.WdSaveOptions.wdSaveChanges);
+                            Marshal.ReleaseComObject(wordDoc);
+
+                            // Fecha a aplicação Word
+                            wordApp.Quit();
+                            Marshal.ReleaseComObject(wordApp);
+
+                            // Aguarde até que o processo do Word seja finalizado
+                            GC.Collect();
+                            GC.WaitForPendingFinalizers();
+
+                            // Envio de e-mail
+                            string emailBody = File.ReadAllText(tempDocPath);
+                            SendEmail(emailBody, "Notificação de Mensalidade Pendente", formando.Email1);
+                        }
+                    }
+                    finally
+                    {
+                        // Fecha o documento e o Word
+                        wordDoc?.Close(false);
+                        wordApp?.Quit();
+                    }
+
+                    // Remove o arquivo temporário
+                    File.Delete(tempDocPath);
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao obter dados dos formandos: {ex.Message}");
+            }
         }
+
+        // Método para substituir variáveis de controle no Word
+        private static void ReplaceVariables(Word.Document doc, Dictionary<string, string> replacements)
+        {
+            foreach (var item in replacements)
+            {
+                Word.Find findObject = doc.Content.Find;
+                findObject.ClearFormatting();
+                findObject.Text = item.Key;
+                findObject.Replacement.ClearFormatting();
+                findObject.Replacement.Text = item.Value;
+
+                // Executa o replace
+                findObject.Execute(
+                    Replace: Word.WdReplace.wdReplaceAll,
+                    Forward: true,
+                    Wrap: Word.WdFindWrap.wdFindContinue);
+            }
+        }
+
+        // Método para gerar a referência utilizando a API
+        private static ReferenceMB GenerateReferenceAPI(string refAcao, string nif, decimal valor, DateTime expirationDate)
+        {
+            ReferenceMB reference = new ReferenceMB();
+
+            try
+            {
+                var options = new RestClientOptions("https://server1.criap.com/api/easypay")
+                {
+                    ThrowOnAnyError = false,
+                    MaxTimeout = 10000,
+                    RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true
+                };
+
+                var client = new RestClient(options);
+                var req = new RestRequest();
+
+                req.RequestFormat = DataFormat.Json;
+                req.AddHeader("Authorization", "Basic YWRtaW5BUEk6eFdlMjU1NWthZ3h4biF5WA=="); // Substitua pela chave real
+                req.AddQueryParameter("refAcao", refAcao);
+                req.AddQueryParameter("idNumber", nif);
+                req.AddQueryParameter("valor", valor);
+                req.AddQueryParameter("expiration_date", expirationDate.ToString("MM-dd-yyyy"));
+
+                var resp = client.ExecuteGet(req);
+
+                if (resp.IsSuccessStatusCode)
+                {
+                    string response = resp.Content;
+                    reference = JsonConvert.DeserializeObject<ReferenceMB>(response);
+                }
+                else
+                {
+                    Console.WriteLine($"Erro ao chamar a API: {resp.StatusDescription}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao gerar referência: {ex.Message}");
+            }
+
+            return reference;
+        }
+
         private void Get_Salas()
         {
             db.Salas.Clear();
@@ -478,7 +653,7 @@ namespace SalasZoomNotificationFormadores
 
 
         }
-        private void SendEmail(string body, string assunto = "", bool error = false)
+        private void SendEmail(string body, string assunto = "", string toEmail = "")
         {
             NetworkCredential basicCredential = new NetworkCredential(Properties.Settings.Default.emailenvio, Properties.Settings.Default.passwordemail);
             SmtpClient client = new SmtpClient();
@@ -502,7 +677,7 @@ namespace SalasZoomNotificationFormadores
 
             }
             else
-                mm.To.Add("sandraaguilar@criap.com");
+                mm.To.Add("raphaelcastro@criap.com");
             mm.Subject = assunto + " // " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToShortTimeString();
             mm.IsBodyHtml = false;
             mm.BodyEncoding = UTF8Encoding.UTF8;

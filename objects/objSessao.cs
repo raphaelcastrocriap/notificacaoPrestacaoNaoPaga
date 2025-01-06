@@ -59,18 +59,28 @@ namespace SalasZoomNotificationFormadores.objects
 
     public class objColaborador
     {
+        internal string entity;
+        internal string reference;
+
         public string codigo_Colaborador { get; set; }
-
-        public string nome { get; set; }
-
-        public bool gestaosalas { get; set; }
-
-        public string email { get; set; }
-
-        public string nomeemail { get; set; }
-
+        public string nome { get; set; }              
+        public string telefone1 { get; set; }         
+        public string telefone2 { get; set; }         
+        public string email1 { get; set; }            
+        public string email2 { get; set; }            
+        public string curso { get; set; }             
+        public string acao { get; set; }              
+        public string estado { get; set; }            
+        public string valor { get; set; }     
+        public string descricao { get; set; }         
+        public DateTime dataPrestacao { get; set; }   
+        public bool gestaosalas { get; set; }         
+        public string email { get; set; }             
+        public string nomeemail { get; set; }         
         public string sigla { get; set; }
+        public string NC { get; internal set; }
     }
+
 
     class objSinc
     {

@@ -48,7 +48,7 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(317, 23);
             this.button2.TabIndex = 7;
-            this.button2.Text = "Start Notification Salas Zoom by Email - Formadores";
+            this.button2.Text = "Start Notificação Pendência de Pagamento by Email - Formadores";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.Button2_Click_1);
             // 
@@ -73,7 +73,7 @@
             this.Controls.Add(this.button2);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "Notification Salas Zoom by Email - Formadores";
+            this.Text = "Notificação Pendência de Pagamento by Email - Formadores";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
 

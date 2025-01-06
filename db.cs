@@ -14,7 +14,7 @@ namespace SalasZoomNotificationFormadores
         public static List<objSessao> htSessoes = new List<objSessao>();
         public static List<objSala> Salas = new List<objSala>();
         public static List<objAlojamento> Alojamentos = new List<objAlojamento>();
-        public static List<objColaborador> listaColaboradores = new List<objColaborador>();
+        public static List<objColaborador> listaFormandos = new List<objColaborador>();
 
         public static List<objSessao> htSessoesSelected = new List<objSessao>();
 
