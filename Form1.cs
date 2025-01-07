@@ -16,7 +16,8 @@ using System.Threading;
 using System.IO;
 using RestSharp;
 using Newtonsoft.Json;
-//using Microsoft.Office.Interop.Word;
+using System.Globalization;
+
 
 
 namespace SalasZoomNotificationFormadores
@@ -115,20 +116,20 @@ namespace SalasZoomNotificationFormadores
                 TimeSpan delay = new TimeSpan(0, 5, 0);
                 if (e.Message.Contains("Foi estabelecida ligação com êxito ao servidor, mas, em seguida, ocorreu um erro durante o handshake anterior ao início de sessão"))
                 {
-                    //SendEmail(richTextBox1.Text + "\n\n" + e.ToString() + "\n" + "IMPORTANTE: Em 5 min será executada a rotina outra vez...", "Notificação Pendência de Pagamento // Formadores - HANDSHAKE ERROR", true);
+                    SendEmail(richTextBox1.Text + "\n\n" + e.ToString() + "\n" + "IMPORTANTE: Em 5 min será executada a rotina outra vez...", "Notificação Pendência de Pagamento // Formadores - HANDSHAKE ERROR", "informatica@criap.com");
 
                     Thread.Sleep(delay);
                     ExecuteSync();
                 }
                 else if (e.Message.Contains("Não foi possível criar um canal seguro SSL/TLS"))
                 {
-                    //SendEmail(richTextBox1.Text + "\n\n" + e.ToString() + "\n" + "IMPORTANTE: Em 5 min será executada a rotina outra vez...", "Notificação Pendência de Pagamento // Formadores - canal seguro SSL/TLS", true);
+                    SendEmail(richTextBox1.Text + "\n\n" + e.ToString() + "\n" + "IMPORTANTE: Em 5 min será executada a rotina outra vez...", "Notificação Pendência de Pagamento // Formadores - canal seguro SSL/TLS", "informatica@criap.com");
 
                     Thread.Sleep(delay);
                     ExecuteSync();
                 }
                 else {
-                    //SendEmail(richTextBox1.Text + "\n\n" + e.ToString(), "Notificação Pendência de Pagamento // Formadores - ERROR ", true);
+                    SendEmail(richTextBox1.Text + "\n\n" + e.ToString(), "Notificação Pendência de Pagamento // Formadores - ERROR ", "informatica@criap.com");
                 }
 
             }
@@ -136,21 +137,29 @@ namespace SalasZoomNotificationFormadores
         
         public void Get_Formandos()
         {
-            richTextBox1.Text = richTextBox1.Text + "\nFORMANDOS:\n\n";
+            richTextBox1.Text = richTextBox1.Text + "\nFORMANDOS:\n<br>";
             try
             {
                 db.listaFormandos.Clear();
 
-                string subQuery = $@"SELECT tf.Codigo_Formando, tf.NC, tf.Formando, tf.Sexo, tf.Nome_Abreviado, Cc.telefone1, 
-                            Cc.Email1, tp.Descricao, ta.Ref_Accao, tp.data_prestacao, tp.Valor_desconto AS Valor
-                            FROM TBForFormandos tf 
-                            INNER JOIN TBForFinOrdensFaturacaoPlano tp ON tp.Rowid_entidade = tf.versao_rowid 
-                            INNER JOIN TBForAccoes ta ON ta.versao_rowid = tp.Rowid_Opcao 
-                            LEFT JOIN TBGerContactos Cc ON tf.versao_rowid = Cc.Codigo_Entidade 
-                            WHERE tp.pago = 0 AND tp.data_prestacao = '{DateTime.Now.AddDays(+1):yyyy-MM-dd}' 
-                            AND TRY_CAST(LEFT(tp.Descricao, 1) AS INT) > 2 AND SUBSTRING(tp.Descricao, 2, 1) = 'ª' 
-                            AND tf.Codigo_Formando=26051
-                            ORDER BY tf.Codigo_Formando, tp.Descricao";
+                string subQuery = $@"DECLARE @DATAHOJE DATE;
+                            SET @DATAHOJE = '{DateTime.Now.AddDays(-1):yyyy-MM-dd}';
+                            SELECT *,
+                            CASE WHEN ta.Codigo_Estado = 1 THEN 'Confirmado' WHEN ta.Codigo_Estado = 4 THEN 'Em análise' END AS Estado, 
+                            tf.Formando AS 'Formando', tp.Valor_desconto AS 'Valor', tp.Descricao, tp.data_prestacao ,
+                            (DATEDIFF(month,data_prestacao,@DATAHOJE)+1) * 25 as coima, tp.Valor_desconto+(DATEDIFF(month,data_prestacao,@DATAHOJE)+1) * 25 as valor_total
+                            FROM TBForFinOrdensFaturacaoPlano tp 
+                            INNER JOIN TBForFormandos tf ON tp.Rowid_entidade = tf.versao_rowid 
+                            INNER JOIN TBForAccoes ta ON ta.versao_rowid = tp.Rowid_Opcao
+                            INNER JOIN TBForInscricoes ti on tp.rowid_opcao=ti.Rowid_Accao and ti.Codigo_Formando=tf.Codigo_Formando
+                            INNER JOIN TBForCursos c ON ta.Codigo_Curso = c.Codigo_Curso 
+                            INNER JOIN TBGerContactos Cc ON tf.versao_rowid = Cc.Codigo_Entidade AND Cc.Tipo_Entidade=3 
+                            WHERE tp.pago = 0 AND tp.data_prestacao between DATEADD(MONTH,-1,DATEADD(DAY,-1,@DATAHOJE))  and @DATAHOJE 
+                            AND (ta.Codigo_Estado=1 or ta.Codigo_Estado=5)
+                            AND tp.Descricao LIKE '%ª prestação%' 
+                            AND CAST(SUBSTRING(tp.Descricao, 1, CHARINDEX('ª', tp.Descricao) - 1) AS INT)>2
+                            AND ti.Confirmado=1 and ti.Desistente=0
+                            ORDER BY tf.formando";
 
                 dbConnect.ht2.ConnInit();
                 SqlDataAdapter adapter = new SqlDataAdapter(subQuery, dbConnect.ht2.Conn);
@@ -167,10 +176,15 @@ namespace SalasZoomNotificationFormadores
                         {
                             Codigo_Formando = grupo.Key,
                             Nome = grupo.First()["Formando"].ToString(),
+                            NC = grupo.First()["NC"].ToString(),
                             Telefone = grupo.First()["telefone1"].ToString(),
                             Nome_Abreviado = grupo.First()["Nome_Abreviado"].ToString(),
                             Email1 = grupo.First()["Email1"].ToString(),
                             Sexo = grupo.First()["Sexo"].ToString(),
+                            RefAcao = grupo.First()["Ref_Accao"].ToString(),
+                            //ValorTotal = grupo.First()["valor_total"],
+                            ValorTotal = grupo.First()["valor_total"] is decimal valor ? valor : Convert.ToDecimal(grupo.First()["valor_total"]),
+
                             ParcelaDetalhes = grupo.Select(row => new
                             {
                                 Descricao = row["Descricao"].ToString(),
@@ -226,7 +240,7 @@ namespace SalasZoomNotificationFormadores
                                             <tbody>
                                                 <tr>
                                                     <td rowspan='3' style='text-align: center;'>
-                                                        <img src='{{imgMB}}' alt='Logotipo Multibanco' style='width: 150px;'>
+                                                          <img src='https://img.icons8.com/?size=100&id=HWbgAihjYdU_&format=png&color=000000'>
                                                     </td>
                                                     <td>ENTIDADE:</td>
                                                     <td><strong>{{entidade}}</strong></td>
@@ -249,11 +263,11 @@ namespace SalasZoomNotificationFormadores
 
                                     <p>
                                         Em caso de esclarecimentos ou informações adicionais, estamos ao seu dispor através do e-mail:
-                                        <a href='mailto:departamentojuridico@criap.com'>departamentojuridico@criap.com</a> ou através do contacto telefónico +351 225 492 190.
+                                        <a href='mailto:departamentojuridico@criap.com'>departamentojuridico@criap.com</a> ou através do contacto telefónico <strong>+351 225 492 190</strong>.
                                     </p>
 
                                     <p>Com os melhores cumprimentos,</p>
-                                    <p>Instituto CRIAP</p>
+                                    <p><strong>Instituto CRIAP</strong></p>
                                 </body>
                                 </html>
                                 ";
@@ -265,20 +279,26 @@ namespace SalasZoomNotificationFormadores
                             $"<td>{parcela.DataPrestacao:dd-MM-yyyy}</td>" +
                             $"<td>{parcela.ValorParcela:F2}€ + Taxa administrativa: 25€</td></tr>"));
 
+
+                        ReferenceMB reference = GenerateReferenceAPI(formando.RefAcao, formando.NC, Math.Round(formando.ValorTotal, 2), DateTime.Now.AddDays(2));
+
+                        ////// se a referencia for fazio gera erro falando que nao pode gera a referencia a passa para o proximo formando
+
+                        ///// Verificar se precisa gravar essa referencia em algum lugar
+
                         // Substituir placeholders no HTML
                         string emailBody = htmlTemplate
                             .Replace("{{nome}}", (formando.Sexo == "F") ? " Estimada formanda " + formando.Nome_Abreviado : " Estimado formando " + formando.Nome_Abreviado)
-                            .Replace("{{entidade}}", formando.Codigo_Formando)
-                            .Replace("{{referencia}}", formando.Codigo_Formando) // Substituir pela referência correta
+                            .Replace("{{entidade}}", reference.Method.Entity)
+                            .Replace("{{referencia}}", reference.Method.Reference)
                             .Replace("{{valor}}", formando.ParcelaDetalhes.Sum(p => p.ValorComMulta).ToString("F2"))
                             .Replace("<tr><td>{{prestacao}}</td>", linhasTabela)
-                            .Replace("{{tabela}}", linhasTabela)
-                            .Replace("{{imgMB}}", "data:image/png;base64," + RetornaImgBase64("\\\\192.168.1.211\\Documentos\\criapgeral\\CriapFPApps\\CRIAPContratos\\docs\\emailBody\\multibanco.png"));
+                            .Replace("{{tabela}}", linhasTabela);
 
                         // Enviar o e-mail
                         SendEmail(emailBody, "Notificação de Mensalidade Pendente", formando.Email1);
 
-                        richTextBox1.Text += (formando.Sexo == "F" ? "Formanda " : "Formando ") + formando.Nome + " | " + formando.Email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + "\n";
+                        richTextBox1.Text += (formando.Sexo == "F" ? "Formanda " : "Formando ") + formando.Nome + " | " + formando.Email1 + " | enviado email no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") + "<br>";
 
                         // Envia sms
                         recipientWithName newSms = new recipientWithName();
@@ -331,7 +351,7 @@ namespace SalasZoomNotificationFormadores
                                 //  if (!teste)
                                 var res = smsByMailSEIService.sendShortScheduledMessage(credenciais, smsS.ToArray()).resultMessage.ToString(); //principal
 
-                                richTextBox1.Text += (formando.Sexo == "F" ? "Formanda " : "Formando ") + formando.Nome + " | " + formando.Telefone + (res.ToUpper().Contains("OK") ? " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") : "| sms NÃO ENVIADO") + "\n\n";
+                                richTextBox1.Text += (formando.Sexo == "F" ? "Formanda " : "Formando ") + formando.Nome + " | " + formando.Telefone + (res.ToUpper().Contains("OK") ? " | enviado sms no dia " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString("HH:mm") : "| sms NÃO ENVIADO") + "<br>";
 
                             }
                         }
@@ -340,9 +360,11 @@ namespace SalasZoomNotificationFormadores
             }
             catch (Exception ex)
             {
-                richTextBox1.Text += "Erro: " + ex.Message + "\n";
+                richTextBox1.Text += "<br><br>Erro: " + ex.Message + "\n";
             }
         }
+        
+
 
         public static string GetNomeCurso(string refAcao)
         {
