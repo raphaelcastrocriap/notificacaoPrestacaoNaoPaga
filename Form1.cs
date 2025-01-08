@@ -30,7 +30,7 @@ namespace SalasZoomNotificationFormadores
         authentication credenciais = new authentication();
         List<Obj_logSend> logsSenders = new List<Obj_logSend>();
         SMSByMailSEIService smsByMailSEIService = new SMSByMailSEIService();
-        DateTime horasyncman;
+        DateTime dateNow;
         string mensagemInfo = "";
 
         public Form1()
@@ -43,23 +43,23 @@ namespace SalasZoomNotificationFormadores
 
         {
            
-            //horasyncman = new DateTime(2022, 9, 29, 14, 0, 0);
-            //horasyncman = new DateTime(2022, 10, 8, 8, 0, 0);
             teste = true;
+
             if (!teste)
-                horasyncman = DateTime.Now;
+                dateNow = DateTime.Now;
             else
-                horasyncman = DateTime.Now; //new DateTime(2024, 12, 12, 14, 0, 0);
-            
+                dateNow = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 8);
+
             Security.remote();
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
             Text += " V." + v.Major.ToString() + "." + v.Minor.ToString() + "." + v.Build.ToString();
 
-            string dt = @"Controlo de versão: " + " V." + v.Major.ToString() + "." + v.Minor.ToString() + "." + v.Build.ToString() + " Assembly built date: " + System.IO.File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location) + " by sa";
+            string dt = @"Controlo de versão: " + " V." + v.Major.ToString() + "." + v.Minor.ToString() + "." + v.Build.ToString() + " Assembly built date: " + System.IO.File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location) + " by rc";
             mensagemInfo += " \r\n" + dt;
             string[] passedInArgs = Environment.GetCommandLineArgs();
 
-            if (DateTime.Now.Day == 9) // certifica que é dia 9 do mes
+            // Certifica que é dia 9 do mes
+            if (DateTime.Now.Day == 9) 
             {
                 if (passedInArgs.Contains("-a") || passedInArgs.Contains("-A"))
                 {
@@ -92,22 +92,7 @@ namespace SalasZoomNotificationFormadores
                 newCursoTextBox.Clear();
                 StartSmsService();
                 Get_Formandos();
-                //Get_Salas();
-                //GetHT_data(horasyncman, horasyncman);
-                //GetFormacaoExterna(horasyncman, horasyncman);
-                //GetSecretariaData();
-
-                //if (horasyncman.DayOfWeek == DayOfWeek.Saturday || horasyncman.DayOfWeek == DayOfWeek.Sunday)
-                //{
-                //    if (horasyncman.Hour < 12)
-                //    {
-                //        Envia_emails_formadores_sabado();
-                //    }
-                //}
-                //else
-                //{
-                //    Envia_emails_formadores();
-                //}
+                
                 SendEmail(richTextBox1.Text, "Notification Pendências // Formadores - Emails enviados", "informatica@criap.com");
             }
             catch (Exception e)
@@ -143,7 +128,7 @@ namespace SalasZoomNotificationFormadores
                 db.listaFormandos.Clear();
 
                 string subQuery = $@"DECLARE @DATAHOJE DATE;
-                            SET @DATAHOJE = '{DateTime.Now.AddDays(-1):yyyy-MM-dd}';
+                            SET @DATAHOJE = '{dateNow:yyyy-MM-dd}';
                             SELECT *,
                             CASE WHEN ta.Codigo_Estado = 1 THEN 'Confirmado' WHEN ta.Codigo_Estado = 4 THEN 'Em análise' END AS Estado, 
                             tf.Formando AS 'Formando', tp.Valor_desconto AS 'Valor', tp.Descricao, tp.data_prestacao ,
@@ -183,16 +168,20 @@ namespace SalasZoomNotificationFormadores
                             Sexo = grupo.First()["Sexo"].ToString(),
                             RefAcao = grupo.First()["Ref_Accao"].ToString(),
                             //ValorTotal = grupo.First()["valor_total"],
-                            ValorTotal = grupo.First()["valor_total"] is decimal valor ? valor : Convert.ToDecimal(grupo.First()["valor_total"]),
+                            //ValorTotal = grupo.First()["valor_total"] is decimal valor ? valor : Convert.ToDecimal(grupo.First()["valor_total"]),
 
+                            // ParcelaDetalhes contém os valores das parcelas
                             ParcelaDetalhes = grupo.Select(row => new
                             {
                                 Descricao = row["Descricao"].ToString(),
                                 Ref_Accao = row["Ref_Accao"].ToString(),
                                 DataPrestacao = Convert.ToDateTime(row["data_prestacao"]),
-                                ValorParcela = Convert.ToDecimal(row["Valor"]),
-                                ValorComMulta = Convert.ToDecimal(row["Valor"]) + 25 // Adicionando multa
-                            }).ToList()
+                                ValorParcela = Convert.ToDecimal(row["Valor_desconto"]),
+                                ValorComMulta = Convert.ToDecimal(row["Valor_desconto"]) + 25 // Adicionando multa
+                            }).ToList(),
+                            
+                            // Valor total com multa calculado aqui em decimal
+                            ValorTotalComMulta = grupo.Select(row => Convert.ToDecimal(row["Valor_desconto"]) + 25).Sum()
                         }).ToList();
 
                     foreach (var formando in formandosAgrupados)
@@ -279,19 +268,22 @@ namespace SalasZoomNotificationFormadores
                             $"<td>{parcela.DataPrestacao:dd-MM-yyyy}</td>" +
                             $"<td>{parcela.ValorParcela:F2}€ + Taxa administrativa: 25€</td></tr>"));
 
+                        ReferenceMB reference = GenerateReferenceAPI(formando.RefAcao, formando.NC, Math.Round(formando.ValorTotalComMulta, 2), DateTime.Now.AddDays(2));
 
-                        ReferenceMB reference = GenerateReferenceAPI(formando.RefAcao, formando.NC, Math.Round(formando.ValorTotal, 2), DateTime.Now.AddDays(2));
-
-                        ////// se a referencia for fazio gera erro falando que nao pode gera a referencia a passa para o proximo formando
-
-                        ///// Verificar se precisa gravar essa referencia em algum lugar
+                        // Validar se a referência ou seus campos são nulos/vazios
+                        if (reference?.Method == null || string.IsNullOrEmpty(reference.Method.Reference))
+                        {
+                            // Passar para o próximo formando caso seja inválido
+                            richTextBox1.Text += $"Formando {formando.Nome} | {formando.Email1} | referência não gerada, ignorado.\n";
+                            continue;
+                        }
 
                         // Substituir placeholders no HTML
                         string emailBody = htmlTemplate
                             .Replace("{{nome}}", (formando.Sexo == "F") ? " Estimada formanda " + formando.Nome_Abreviado : " Estimado formando " + formando.Nome_Abreviado)
                             .Replace("{{entidade}}", reference.Method.Entity)
                             .Replace("{{referencia}}", reference.Method.Reference)
-                            .Replace("{{valor}}", formando.ParcelaDetalhes.Sum(p => p.ValorComMulta).ToString("F2"))
+                            .Replace("{{valor}}", formando.ValorTotalComMulta.ToString("F2"))
                             .Replace("<tr><td>{{prestacao}}</td>", linhasTabela)
                             .Replace("{{tabela}}", linhasTabela);
 
@@ -475,7 +467,7 @@ namespace SalasZoomNotificationFormadores
             }
 
             // Ajuste o corpo para incluir o conteúdo HTML
-            mm.Body = $"<html><body>{body}{mensagemInfo}</body></html>";
+            mm.Body = $"<html><body>{body}{(teste ? mensagemInfo : string.Empty)}</body></html>";
 
             try
             {
