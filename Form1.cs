@@ -17,6 +17,7 @@ using System.IO;
 using RestSharp;
 using Newtonsoft.Json;
 using System.Globalization;
+using System.Transactions;
 
 
 
@@ -40,7 +41,6 @@ namespace SalasZoomNotificationFormadores
         }
         
         private void Form1_Load(object sender, EventArgs e)
-
         {
            
             teste = true;
@@ -143,7 +143,7 @@ namespace SalasZoomNotificationFormadores
                             AND (ta.Codigo_Estado=1 or ta.Codigo_Estado=5)
                             AND tp.Descricao LIKE '%ª prestação%' 
                             AND CAST(SUBSTRING(tp.Descricao, 1, CHARINDEX('ª', tp.Descricao) - 1) AS INT)>2
-                            AND ti.Confirmado=1 and ti.Desistente=0
+                            AND ti.Confirmado=1 and ti.Desistente=0 AND tp.Codigo_Forma_Pagmto !='ADD'
                             ORDER BY tf.formando";
 
                 dbConnect.ht2.ConnInit();
@@ -167,8 +167,6 @@ namespace SalasZoomNotificationFormadores
                             Email1 = grupo.First()["Email1"].ToString(),
                             Sexo = grupo.First()["Sexo"].ToString(),
                             RefAcao = grupo.First()["Ref_Accao"].ToString(),
-                            //ValorTotal = grupo.First()["valor_total"],
-                            //ValorTotal = grupo.First()["valor_total"] is decimal valor ? valor : Convert.ToDecimal(grupo.First()["valor_total"]),
 
                             // ParcelaDetalhes contém os valores das parcelas
                             ParcelaDetalhes = grupo.Select(row => new
@@ -177,11 +175,12 @@ namespace SalasZoomNotificationFormadores
                                 Ref_Accao = row["Ref_Accao"].ToString(),
                                 DataPrestacao = Convert.ToDateTime(row["data_prestacao"]),
                                 ValorParcela = Convert.ToDecimal(row["Valor_desconto"]),
-                                ValorComMulta = Convert.ToDecimal(row["Valor_desconto"]) + 25 // Adicionando multa
+                                ValorMulta = Convert.ToDecimal(row["coima"]),
+                                ValorComMulta = Convert.ToDecimal(row["valor_total"])  // ja com multa
                             }).ToList(),
                             
                             // Valor total com multa calculado aqui em decimal
-                            ValorTotalComMulta = grupo.Select(row => Convert.ToDecimal(row["Valor_desconto"]) + 25).Sum()
+                            ValorTotalComMulta = grupo.Select(row => Convert.ToDecimal(row["valor_total"])).Sum()
                         }).ToList();
 
                     foreach (var formando in formandosAgrupados)
@@ -266,9 +265,10 @@ namespace SalasZoomNotificationFormadores
                             $"<tr><td>{(string.IsNullOrEmpty(GetNomeCurso(parcela.Ref_Accao)) ? parcela.Ref_Accao : GetNomeCurso(parcela.Ref_Accao))}</td> " +
                             $"<td>({parcela.Descricao})</td>" +
                             $"<td>{parcela.DataPrestacao:dd-MM-yyyy}</td>" +
-                            $"<td>{parcela.ValorParcela:F2}€ + Taxa administrativa: 25€</td></tr>"));
+                            $"<td>{parcela.ValorParcela:F2}€ + Taxa administrativa: {parcela.ValorMulta:F2}€</td></tr>"));
 
-                        ReferenceMB reference = GenerateReferenceAPI(formando.RefAcao, formando.NC, Math.Round(formando.ValorTotalComMulta, 2), DateTime.Now.AddDays(2));
+                        DateTime expirationDate = DateTime.Now.AddDays(2);
+                        ReferenceMB reference = GenerateReferenceAPI(formando.RefAcao, formando.NC, Math.Round(formando.ValorTotalComMulta, 2), expirationDate);
 
                         // Validar se a referência ou seus campos são nulos/vazios
                         if (reference?.Method == null || string.IsNullOrEmpty(reference.Method.Reference))
@@ -277,6 +277,75 @@ namespace SalasZoomNotificationFormadores
                             richTextBox1.Text += $"Formando {formando.Nome} | {formando.Email1} | referência não gerada, ignorado.\n";
                             continue;
                         }
+
+                        // Guarda na base de dados a referência gerada OrdemFaturacao e OrdemFaturacaoAcao 
+                        if (dbConnect.secretariaVirtual.Conn.State != ConnectionState.Open)
+                        {
+                            dbConnect.secretariaVirtual.Conn.Open();
+                        }
+                        using (var transaction = dbConnect.secretariaVirtual.Conn.BeginTransaction())
+                        {
+                            try
+                            {
+                                string subQueryInsert = @"
+                                    INSERT INTO [dbo].[OrdemFaturacao] 
+                                    (Status, Type, Value, Entity, Reference, CreatedAt, ExpirationDate, CodigoFormando, NC) 
+                                    OUTPUT INSERTED.Id
+                                    VALUES 
+                                    (@Status, @Type, @Value, @Entity, @Reference, @CreatedAt, @ExpirationDate, @CodigoFormando, @NC)";
+
+                                int ordemFaturacaoId;
+                                using (SqlCommand cmd = new SqlCommand(subQueryInsert, dbConnect.secretariaVirtual.Conn, transaction))
+                                {
+                                    cmd.Parameters.AddWithValue("@Status", reference.Method.Status);
+                                    cmd.Parameters.AddWithValue("@Type", reference.Method.Type);
+                                    cmd.Parameters.AddWithValue("@Value", Math.Round(formando.ValorTotalComMulta, 2));
+                                    cmd.Parameters.AddWithValue("@Entity", reference.Method.Entity);
+                                    cmd.Parameters.AddWithValue("@Reference", reference.Method.Reference);
+                                    cmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
+                                    cmd.Parameters.AddWithValue("@ExpirationDate", expirationDate);
+                                    cmd.Parameters.AddWithValue("@CodigoFormando", formando.Codigo_Formando);
+                                    cmd.Parameters.AddWithValue("@NC", formando.NC);
+
+                                    ordemFaturacaoId = (int)cmd.ExecuteScalar();
+                                }
+
+                                string insertAcoesQuery = @"
+                                    INSERT INTO [dbo].[OrdemFaturacaoAcao] 
+                                    (OrdemFaturacaoId, RefAcao, Descricao, ValorParcela, ValorComMulta, DataPrestacao) 
+                                    VALUES 
+                                    (@OrdemFaturacaoId, @RefAcao, @Descricao, @ValorParcela, @ValorComMulta, @DataPrestacao)";
+
+                                using (SqlCommand cmd = new SqlCommand(insertAcoesQuery, dbConnect.secretariaVirtual.Conn, transaction))
+                                {
+                                    foreach (var parcela in formando.ParcelaDetalhes)
+                                    {
+                                        cmd.Parameters.Clear();
+                                        cmd.Parameters.AddWithValue("@OrdemFaturacaoId", ordemFaturacaoId);
+                                        cmd.Parameters.AddWithValue("@RefAcao", parcela.Ref_Accao);
+                                        cmd.Parameters.AddWithValue("@Descricao", parcela.Descricao);
+                                        cmd.Parameters.AddWithValue("@ValorParcela", parcela.ValorParcela);
+                                        cmd.Parameters.AddWithValue("@ValorComMulta", parcela.ValorComMulta);
+                                        cmd.Parameters.AddWithValue("@DataPrestacao", parcela.DataPrestacao);
+
+                                        cmd.ExecuteNonQuery();
+                                    }
+                                }
+
+                                // Commit da transação
+                                transaction.Commit();
+
+                                // Log no RichTextBox
+                                richTextBox1.Text += $"Ordem de faturação gerada para o formando {formando.Nome} com referência {reference.Method.Reference}.\n";
+                            }
+                            catch (Exception ex)
+                            {
+                                // Caso ocorra um erro, da rollback
+                                transaction.Rollback();
+                                richTextBox1.Text += $"Erro ao gerar ordem de faturação: {ex.Message}\n";
+                            }
+                        }
+
 
                         // Substituir placeholders no HTML
                         string emailBody = htmlTemplate
