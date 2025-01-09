@@ -143,7 +143,7 @@ namespace SalasZoomNotificationFormadores
                             AND (ta.Codigo_Estado=1 or ta.Codigo_Estado=5)
                             AND tp.Descricao LIKE '%ª prestação%' 
                             AND CAST(SUBSTRING(tp.Descricao, 1, CHARINDEX('ª', tp.Descricao) - 1) AS INT)>2
-                            AND ti.Confirmado=1 and ti.Desistente=0 AND tp.Codigo_Forma_Pagmto !='ADD'
+                            AND ti.Confirmado=1 and ti.Desistente=0 AND tp.Codigo_Forma_Pagmto !='ADD' AND tp.Codigo_Forma_Pagmto !='TF'
                             ORDER BY tf.formando";
 
                 dbConnect.ht2.ConnInit();
